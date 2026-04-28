@@ -1,0 +1,131 @@
+{
+  "collapse_probability_ever": {
+    "rajasthan": {
+      "baseline": 0.08666666666666667,
+      "major_interventions": 0.0,
+      "canal_boost": 0.0,
+      "drought": 0.9666666666666667
+    },
+    "gobi": {
+      "baseline": 0.9333333333333333,
+      "major_interventions": 0.1,
+      "irrigation_boost": 0.78,
+      "restoration": 0.1
+    }
+  },
+  "collapse_probability_terminal": {
+    "rajasthan": {
+      "baseline": 0.02,
+      "major_interventions": 0.0,
+      "canal_boost": 0.0,
+      "drought": 0.88
+    },
+    "gobi": {
+      "baseline": 0.36,
+      "major_interventions": 0.0,
+      "irrigation_boost": 0.29333333333333333,
+      "restoration": 0.0
+    }
+  },
+  "collapse_probability_persistent_2yr": {
+    "rajasthan": {
+      "baseline": 0.02666666666666667,
+      "major_interventions": 0.0,
+      "canal_boost": 0.0,
+      "drought": 0.9333333333333333
+    },
+    "gobi": {
+      "baseline": 0.6733333333333333,
+      "major_interventions": 0.006666666666666667,
+      "irrigation_boost": 0.47333333333333333,
+      "restoration": 0.006666666666666667
+    }
+  },
+  "lyapunov": {
+    "rajasthan": -0.03570619420827556,
+    "gobi": -0.04529920677071825
+  },
+  "noise_sigma": {
+    "rajasthan": 0.018,
+    "gobi": 0.012
+  },
+  "selection_tier": {
+    "rajasthan": 2,
+    "gobi": 1
+  },
+  "fit_r2": {
+    "rajasthan": 0.0012213252227736282,
+    "gobi": 0.08655423076025659
+  },
+  "fit_nmae_iqr": {
+    "rajasthan": 0.566329099054477,
+    "gobi": 0.674044333095565
+  },
+  "fit_r2_base": {
+    "rajasthan": 0.0012213252227736282,
+    "gobi": 0.08655423076025659
+  },
+  "residual_correction_applied": {
+    "rajasthan": false,
+    "gobi": false
+  },
+  "policy_sensitivity_active": {
+    "rajasthan": true,
+    "gobi": true
+  },
+  "policy_sensitivity_terms": {
+    "rajasthan": [
+      "SoilMoist",
+      "Albedo",
+      "FPAR",
+      "Dust_Stress"
+    ],
+    "gobi": [
+      "Rain_norm",
+      "SoilMoist",
+      "Albedo",
+      "FPAR",
+      "Dust_Stress",
+      "Groundwater_Anomaly"
+    ]
+  },
+  "clip_saturation": {
+    "rajasthan": 0.0,
+    "gobi": 0.0
+  },
+  "sign_change_effective": {
+    "rajasthan": true,
+    "gobi": true
+  },
+  "reliability_pass": {
+    "rajasthan": true,
+    "gobi": true
+  },
+  "reliability_checks": {
+    "rajasthan": {
+      "tier_ok": true,
+      "fit_ok": true,
+      "clip_ok": true,
+      "sign_change_ok": true,
+      "tier_strict_ok": true,
+      "tier_relaxed_ok": true,
+      "r2_ok": false,
+      "nmae_ok": true
+    },
+    "gobi": {
+      "tier_ok": true,
+      "fit_ok": true,
+      "clip_ok": true,
+      "sign_change_ok": true,
+      "tier_strict_ok": true,
+      "tier_relaxed_ok": true,
+      "r2_ok": false,
+      "nmae_ok": true
+    }
+  },
+  "cell_output_log": "images/cell_outputs_20260428_085706.log",
+  "equations": {
+    "rajasthan": "sin(Rain_norm)*0.27389437*(FPAR*Rain_norm - NDVI_sq)",
+    "gobi": "Dust_Stress*(NDVI_sq*(exp(Rain_norm) - 2.2294471) - 1*(-0.031460643)) - 0.0039679636"
+  }
+}

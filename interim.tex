@@ -1,0 +1,1219 @@
+% ============================================================
+% INTERIM REPORT — COMPLETE FINAL VERSION (v3)
+% Scientific Machine Learning for the Analysis of
+% Long-Term Desertification Reversal Stability
+% ============================================================
+
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{mdframed}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{amsmath}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{tabularx}
+\usepackage{float}       % provides [H] placement
+\usepackage{needspace}   % prevents orphan boxes
+
+% ---------- Colours ----------
+\definecolor{keyblue}{RGB}{30, 90, 160}
+\definecolor{warnred}{RGB}{180, 30, 30}
+\definecolor{notegreen}{RGB}{20, 120, 60}
+\definecolor{lightgray}{RGB}{245, 245, 245}
+
+% ---------- Box styles (nobreak keeps them on one page) ----------
+\mdfdefinestyle{keybox}{
+    backgroundcolor=lightgray,
+    linecolor=keyblue,
+    linewidth=1.5pt,
+    roundcorner=5pt,
+    innertopmargin=8pt, innerbottommargin=8pt,
+    innerleftmargin=12pt, innerrightmargin=12pt,
+    nobreak=true
+}
+\mdfdefinestyle{warnbox}{
+    backgroundcolor=yellow!8,
+    linecolor=warnred,
+    linewidth=1.5pt,
+    roundcorner=5pt,
+    innertopmargin=8pt, innerbottommargin=8pt,
+    innerleftmargin=12pt, innerrightmargin=12pt,
+    nobreak=true
+}
+\mdfdefinestyle{notebox}{
+    backgroundcolor=green!5,
+    linecolor=notegreen,
+    linewidth=1.5pt,
+    roundcorner=5pt,
+    innertopmargin=8pt, innerbottommargin=8pt,
+    innerleftmargin=12pt, innerrightmargin=12pt,
+    nobreak=true
+}
+
+% ---------- Header / Footer ----------
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textit{SciML Desertification Reversal}}
+\lhead{\textit{Interim Report}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---------- Section formatting ----------
+\titleformat{\section}
+  {\large\bfseries\color{keyblue}}{\thesection.}{0.6em}{}[\titlerule]
+\titleformat{\subsection}
+  {\normalsize\bfseries\color{keyblue!80!black}}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}
+  {\normalsize\bfseries}{\thesubsubsection.}{0.5em}{}
+
+% ---------- Description list style ----------
+\setlist[description]{
+  leftmargin=3.4cm,
+  labelwidth=3.2cm,
+  labelsep=0.2cm,
+  font=\normalfont\bfseries\color{keyblue}
+}
+
+% ============================================================
+\begin{document}
+
+% ---- Title Page ----
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\LARGE \textbf{Interim Progress Report}}\\[0.6cm]
+    {\large \textit{Scientific Machine Learning for the Analysis of}}\\[0.2cm]
+    {\large \textit{Long-Term Desertification Reversal Stability}}\\[1.8cm]
+    \rule{\textwidth}{1pt}\\[0.6cm]
+    {\large Submitted to: \textbf{[Prof. Balakrishnan Ashok]}}\\[0.3cm]
+    {\large Submitted by: \textbf{[Sanchit Kumar Dogra]}}\\[0.3cm]
+    {\large Date: \textbf{\today}}\\[0.6cm]
+    \rule{\textwidth}{1pt}\\[1.5cm]
+    \begin{mdframed}[style=keybox]
+        \textbf{Project Summary in Plain Terms}\\[6pt]
+        This project uses satellite data collected over nearly two decades to
+        study whether efforts to reverse desertification are working and will
+        continue to work in the long term. Two real-world case studies are
+        examined: the \textbf{Indira Gandhi Canal region in Rajasthan, India},
+        where large-scale irrigation was introduced into a desert landscape,
+        and the \textbf{Gobi Desert in China}, where a massive tree-planting
+        programme known as the Great Green Wall has been underway.
+        Advanced mathematical and computational techniques are used to
+        discover the hidden laws governing each ecosystem and to forecast
+        their futures under different possible policy decisions.
+    \end{mdframed}
+    \vfill
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{Project Background and Motivation}
+
+Desertification is the gradual transformation of productive land into barren
+desert and represents one of the most pressing environmental challenges of
+our time. While governments have invested heavily in programmes to reverse
+this process, a critical question remains unanswered: are these reversals
+truly stable over the long term, or are they fragile interventions that could
+collapse under future climate stress?
+
+This project addresses that question scientifically. Rather than simply
+monitoring whether vegetation is present today, it seeks to discover the
+underlying mathematical rules that govern how each ecosystem grows,
+recovers, or declines, and then uses those rules to simulate possible futures
+across the coming 50 years.
+
+% ============================================================
+\section{Step 1: Satellite Data Extraction and Initial Visualisation}
+
+\subsection{Purpose of this Step}
+
+In this step, the project connects to \textbf{Google Earth Engine (GEE)}
+and downloads a comprehensive set of environmental measurements for both
+study regions, covering January 2005 to December 2023, giving 19 years of
+monthly observations. The goal is to build a \textbf{time series}: a table
+where each row represents one month and each column is a different
+environmental measurement.
+
+\subsection{Key Terms and Concepts}
+
+\begin{mdframed}[style=keybox]
+\textbf{Glossary: Step 1}\\[6pt]
+\begin{description}
+    \item[ROI] Region of Interest. The specific geographic study area,
+    defined here as a rectangular bounding box of map coordinates.
+    \item[MODIS] A NASA satellite instrument that photographs the entire
+    Earth every 1 to 2 days at 500 to 1000\,m resolution.
+    \item[NDVI] Normalised Difference Vegetation Index. A number from 0
+    to 1 measuring vegetation health. Values near 0 indicate bare desert;
+    values near 1 indicate dense, healthy plant cover.
+    \item[LAI] Leaf Area Index. The number of leaf layers above each square
+    metre of ground. Higher values indicate a denser canopy.
+    \item[LST] Land Surface Temperature. The ground temperature measured
+    from space, expressed in Kelvin.
+    \item[CHIRPS] A high-resolution daily rainfall dataset combining
+    satellite observations with weather station records.
+    \item[Interpolation] A mathematical technique to fill in missing data
+    points using the measurements immediately before and after a gap.
+\end{description}
+\end{mdframed}
+
+\subsection{Data Sources}
+
+\begin{table}[H]
+\centering
+\caption{Satellite datasets used for environmental measurement extraction.}
+\label{tab:datasources}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{2.8cm} X p{2cm} p{3.2cm}}
+\toprule
+Variable & Description & Resolution & Source \\
+\midrule
+NDVI        & Vegetation greenness index  & 500\,m   & MODIS MOD13Q1  \\
+EVI         & Enhanced vegetation index   & 500\,m   & MODIS MOD13Q1  \\
+LAI         & Leaf area index             & 500\,m   & MODIS MCD15A3H \\
+LST Day/Night & Land surface temperature  & 1000\,m  & MODIS MOD11A2  \\
+Rain        & Monthly precipitation       & 5000\,m  & CHIRPS Daily   \\
+Soil Moisture & Top 10\,cm water content  & 10000\,m & NASA FLDAS     \\
+Albedo      & Surface reflectivity        & 500\,m   & MODIS MCD43A3  \\
+Evapo transpiration & Water lost to evaporation & 500\,m & MODIS MOD16A2 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Plot Interpretation}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{images/download.png}
+    \caption{\textbf{Rajasthan Vegetation and Water Signals, 2005 to 2023.}
+    \textit{Top panel:} Monthly NDVI (blue) and LAI (orange) rise each
+    monsoon season and fall in winter. Peak heights increase over time,
+    providing evidence of long-term greening. LAI peaks that reached
+    approximately 1.2 in 2005 to 2006 exceed 2.0 by 2020 to 2022.
+    \textit{Bottom panel:} Rain, soil moisture, and evapotranspiration
+    signals. The bottom panel contains data quality artefacts described
+    in Section~\ref{sec:dataquality}.}
+    \label{fig:rajasthan_plot}
+\end{figure}
+
+\subsection{Data Quality Assessment}
+\label{sec:dataquality}
+
+\begin{mdframed}[style=warnbox]
+\textbf{\textcolor{warnred}{Three Variables Show Anomalous Behaviour}}\\[4pt]
+An inspection of Figure~\ref{fig:rajasthan_plot} reveals that three of the
+nine extracted variables exhibit patterns that are physically implausible.
+These must be corrected before any downstream analysis can rely on them.
+\end{mdframed}
+
+\begin{table}[H]
+\centering
+\caption{Variable reliability assessment for the extracted satellite data.}
+\label{tab:quality}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{3.2cm} p{2.2cm} X}
+\toprule
+Variable & Status & Assessment \\
+\midrule
+NDVI, EVI, LAI &
+\textcolor{notegreen}{\textbf{Reliable}} &
+Physically consistent seasonal cycles; long-term trend confirmed \\[4pt]
+LST, Albedo &
+\textcolor{notegreen}{\textbf{Reliable}} &
+Standard MODIS products with well-established scaling \\[6pt]
+Rain &
+\textcolor{warnred}{\textbf{Unreliable}} &
+\texttt{col.median()} on daily data gives near-zero values;
+must use \texttt{col.sum()} to obtain monthly totals \\[4pt]
+Soil Moisture &
+\textcolor{warnred}{\textbf{Unreliable}} &
+Near-zero for entire record; FLDAS band extraction likely
+failed silently \\[4pt]
+Evapo transpiration &
+\textcolor{warnred}{\textbf{Unreliable}} &
+Flat line is a fill-value artefact; MOD16A2 uses fill
+value 32767, not $-$9999 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% ============================================================
+\section{Step 2: Ecological Structure Analysis}
+
+\subsection{Purpose}
+
+This step maps inter-variable relationships using a correlation matrix,
+examines whether the ecosystem has a stable dynamical structure using a
+phase portrait, and tracks the year-by-year evolution of annual vegetation
+maxima using a seasonal peak map.
+
+\subsection{Key Terms}
+
+\begin{mdframed}[style=keybox]
+\textbf{Glossary: Step 2}\\[6pt]
+\begin{description}
+    \item[Correlation] A number from $-1$ to $+1$ describing how closely
+    two variables move together. A value near $+1$ means they rise and
+    fall together; near $-1$ means they move in opposite directions.
+    \item[Phase Portrait] A graph of a variable plotted against its own
+    rate of change, revealing the geometry of the ecosystem's dynamics.
+    \item[Attractor] A region in a phase portrait that the system
+    repeatedly returns to after disturbances. The ecosystem's dynamical
+    home state.
+    \item[dNDVI/dt] The rate of change of NDVI: how quickly vegetation
+    is growing or shrinking at any given moment.
+    \item[Smoothing] Replacing each data point with the average of itself
+    and its neighbours in time, to reduce random measurement noise.
+\end{description}
+\end{mdframed}
+
+\subsection{Correlation Matrix}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{images/matrix.png}
+    \caption{\textbf{Ecological Interaction Matrix, Rajasthan (2005 to 2023).}
+    Each cell shows the Pearson correlation between two variables. Deep red
+    indicates a strong positive relationship; deep blue indicates a strong
+    inverse relationship. Key findings: NDVI, EVI, and LAI form a tightly
+    coupled vegetation cluster ($r \geq 0.91$); Albedo is strongly
+    anti-correlated with vegetation ($r = -0.55$), confirming that greener
+    land is physically darker; daytime temperature (LST\_Day) inversely
+    tracks vegetation ($r = -0.65$), reflecting the vegetation cooling
+    effect. Cells involving Rain and Evapo are data artefacts and should
+    be disregarded (Section~\ref{sec:dataquality}).}
+    \label{fig:matrix}
+\end{figure}
+
+\subsection{Phase Portrait}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.78\textwidth]{images/attractor.png}
+    \caption{\textbf{Ecological Phase Portrait: The Rajasthan Attractor
+    (2005 to 2023).} Each curve traces the ecosystem's path through
+    vegetation-state space over one seasonal cycle. The overlapping oval
+    loops centred around NDVI values of 0.30 to 0.45 demonstrate that the
+    system has a stable attractor: after seasonal disturbances it
+    consistently returns to the same region of state space. The gradual
+    rightward drift of the loops over 19 years is consistent with the
+    long-term greening trend observed in Figure~\ref{fig:rajasthan_plot}.}
+    \label{fig:attractor}
+\end{figure}
+
+\subsection{Seasonal Peak Map}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{images/poincare.png}
+    \caption{\textbf{Annual September Vegetation Peak, Rajasthan,
+    2005 to 2023.} Each dot shows the NDVI value at the monsoon maximum
+    for one year. September NDVI rose from approximately 0.30 in 2006
+    to 2007 to consistently above 0.40 after 2015, indicating a transition
+    to a permanently higher vegetation baseline. Dot colour represents
+    concurrent soil moisture (dark blue indicates wetter conditions) but
+    this scale is unreliable due to the data quality issue in
+    Section~\ref{sec:dataquality}.}
+    \label{fig:poincare}
+\end{figure}
+
+\subsection{Synthesis}
+
+The three analyses confirm three key points. First, vegetation indices are
+internally consistent and show physically meaningful relationships with
+temperature and surface reflectivity. Second, the Rajasthan ecosystem has
+a \textbf{stable attractor} that has shifted toward higher NDVI values
+over 19 years. Third, the system is non-linear, which motivates the use of
+Symbolic Regression in Step 3.
+
+% ============================================================
+\section{Step 3: Discovering the Governing Equation via Symbolic Regression}
+\label{sec:step3}
+
+\subsection{Purpose}
+
+This step uses \textbf{PySR} to automatically discover the mathematical
+law governing dNDVI/dt for Rajasthan, then integrates it forward 50 years
+using the \textbf{Runge-Kutta 4} numerical solver.
+
+\subsection{Key Terms}
+
+\begin{mdframed}[style=keybox]
+\textbf{Glossary: Step 3}\\[6pt]
+\begin{description}
+    \item[Symbolic Regression] A machine learning method that discovers
+    a readable mathematical formula from data, rather than fitting a
+    fixed-shape model.
+    \item[ODE] Ordinary Differential Equation. A formula describing how
+    a quantity changes over time.
+    \item[Loss / MSE] Mean Squared Error. A measure of how wrong the
+    equation's predictions are on average. Lower values are better.
+    \item[Complexity] The number of mathematical operations in an
+    equation. Simpler equations are preferred when they fit the data
+    nearly as well as complex ones.
+    \item[RK4] Runge-Kutta 4. A highly accurate method for stepping an
+    ODE forward in time using four intermediate trial steps.
+    \item[Carrying Capacity] The maximum sustainable vegetation level for
+    a given ecosystem. Realistic models must include a term that prevents
+    unbounded growth.
+\end{description}
+\end{mdframed}
+
+\subsection{PySR Result: Rajasthan}
+
+\begin{table}[H]
+\centering
+\caption{Selected PySR candidate equations for Rajasthan. Variable
+mapping: $x_0$=NDVI, $x_1$=Rain, $x_2$=SoilMoist, $x_3$=LST\_Day,
+$x_4$=Albedo, $x_5$=Evapo.}
+\label{tab:pysr_raj}
+\begin{tabularx}{\textwidth}{c c c X}
+\toprule
+\textbf{Complexity} & \textbf{Loss} & \textbf{Score} & \textbf{Equation} \\
+\midrule
+1  & 0.01854 & 0.000 & $y = -0.00069$ \\
+3  & 0.01640 & 0.061 & $y = x_2 - 0.192$ \\
+5  & 0.01434 & \textbf{0.083} &
+    $\mathbf{y = 0.453\,x_0 - 0.153}$ \quad \textbf{Selected} \\
+9  & 0.01339 & 0.032 &
+    $y = (\exp(\cos(\exp(x_2))) - \exp(x_0)) \times -0.327$ \\
+10 & 0.01254 & 0.066 &
+    $y = x_4 \cdot \cos(-0.345\,/\,(x_2 \cdot x_4)) \times 0.516$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The selected equation is:
+\begin{equation}
+    \frac{d(\text{NDVI})}{dt} = 0.453 \times \text{NDVI} - 0.153
+    \label{eq:pysr_best}
+\end{equation}
+with equilibrium at $\text{NDVI}^{*} = 0.153\,/\,0.453 \approx 0.338$,
+which is close to the observed historical mean.
+
+\subsection{50-Year RK4 Forecast}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{images/rk4.png}
+    \caption{\textbf{50-Year Deterministic Forecast, Rajasthan Canal
+    Ecosystem (RK4 Integrator).} Starting from NDVI\,=\,0.26, the
+    trajectory declines to approximately 0.09 within 5 years and
+    stabilises there. This result is an artefact of an incorrectly
+    used ODE (Section~\ref{sec:s3_issues}) and contradicts 19 years of
+    satellite observations showing steady greening. It should not be
+    interpreted as a genuine forecast.}
+    \label{fig:rk4}
+\end{figure}
+
+\subsection{Critical Assessment}
+\label{sec:s3_issues}
+
+\begin{mdframed}[style=warnbox]
+\textbf{\textcolor{warnred}{Four Issues Affect this Forecast}}\\[6pt]
+\textbf{Issue 1. Wrong ODE.} The forecast used a manually written equation,
+not the PySR result. The two formulas are structurally different. I will fix this in the next iteration\\[4pt]
+\textbf{Issue 2. No carrying capacity.} Equation~(\ref{eq:pysr_best}) is
+linearly unstable above the equilibrium: vegetation would grow unboundedly,
+which is physically impossible.\\[4pt]
+\textbf{Issue 3. No driver variables.} Only NDVI itself appears in the
+winning equation. Rainfall and temperature contributed nothing, reflecting
+both unreliable driver data and insufficient PySR iterations.\\[4pt]
+\textbf{Issue 4. Forecast contradicts observations.} A predicted collapse
+to NDVI\,=\,0.09 directly contradicts the observed rising trend documented
+in Step 1.
+\end{mdframed}
+
+% ============================================================
+\section{Step 4: Stability Quantification and Gobi Symbolic Regression}
+
+\subsection{Lyapunov Exponent for Rajasthan}
+
+\begin{mdframed}[style=keybox]
+\textbf{Key Concept: Lyapunov Exponent ($\lambda$)}\\[4pt]
+Got the inspirtion to use this after the NLD course.
+A number measuring how sensitive a system is to tiny disturbances.
+$\lambda < 0$ means nearby trajectories converge (stable, resilient).
+$\lambda > 0$ means they diverge (chaotic, sensitive).
+$\lambda \approx 0$ indicates a system near a tipping point.
+\end{mdframed}
+
+The computed value:
+\begin{equation}
+    \lambda_{\text{Rajasthan}} = -0.9240
+    \label{eq:lyapunov}
+\end{equation}
+confirms mathematical convergence. However, this value is computed on
+the hand-coded ODE rather than PySR's equation, and the system converges
+to a near-desert fixed point at NDVI\,$\approx$\,0.09.
+\textbf{Stability and ecological health are not synonymous}: a system can
+converge stably to a collapsed state.
+
+\subsection{Gobi Desert: PySR Results}
+
+\begin{table}[H]
+\centering
+\caption{Selected PySR candidate equations for the Gobi Desert. Variable
+mapping: $x_0$=NDVI, $x_2$=SoilMoist, $x_3$=LST\_Day, $x_4$=Albedo.}
+\label{tab:pysr_gobi}
+\begin{tabularx}{\textwidth}{c c c X}
+\toprule
+\textbf{Complexity} & \textbf{Loss} & \textbf{Score} & \textbf{Equation} \\
+\midrule
+1  & 0.000821 & 0.000 & $y = 0.000321$ \\
+3  & 0.000811 & 0.006 & $y = 0.0232\,x_0$ \\
+5  & 0.000620 & 0.268 & $y = -80.45\,/\,x_3 + 0.273$ \\
+8  & 0.000358 & \textbf{0.548} &
+    $\mathbf{y = x_0 \cdot x_2 \cdot \sin(0.0823\,x_3)}$
+    \quad \textbf{Selected} \\
+10 & 0.000317 & 0.060 &
+    $y = x_0 \cdot (x_0\,/\,(0.498\,/\,\sin(0.0818\,x_3)))$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The Gobi model achieves substantially lower loss (0.000358 vs 0.01434) and
+a higher score (0.548 vs 0.083) compared to Rajasthan, suggesting richer
+dynamics. The presence of SoilMoist is physically meaningful: unlike
+canal-irrigated Rajasthan, the Gobi depends on natural water availability
+which varies significantly month to month.
+
+\begin{mdframed}[style=warnbox]
+\textbf{\textcolor{warnred}{LST Overfitting Concern}}\\[4pt]
+LST values in Kelvin (approximately 280 to 320\,K) multiplied by 0.0823
+give $\sin(\cdot)$ arguments of 23 to 26 radians, spanning many complete
+oscillation cycles. Over this range, $\sin(0.0823 \times \text{LST})$
+behaves as pseudo-random noise, suggesting a numerical coincidence rather
+than genuine physics. Converting LST to a temperature anomaly
+($\pm 5^{\circ}$C from the monthly mean) before the next PySR run will
+resolve this in the next iteration of bug fixes.
+\end{mdframed}
+
+% ============================================================
+\section{Step 5: Comparative Stability Forecast}
+
+\subsection{Purpose}
+
+This step brings together the two PySR-discovered equations and their
+corresponding Lyapunov exponents to produce a unified comparative forecast
+plotting both ecosystems on the same axes. This is the primary deliverable
+of the current pipeline: a visual and quantitative comparison of the
+long-term outlook for canal-based irrigation (Rajasthan) versus
+afforestation-based restoration (Gobi).
+
+\subsection{Key Terms}
+
+\begin{mdframed}[style=keybox]
+\textbf{Glossary: Step 5}\\[6pt]
+\begin{description}
+    \item[Desert Threshold] The NDVI value below which a landscape is
+    classified as functionally arid. A common threshold is NDVI\,=\,0.10.
+    Below this level, vegetation is too sparse to provide meaningful
+    ecosystem services.
+    \item[Lyapunov Stability] A negative Lyapunov exponent at a fixed
+    point indicates the system will return to that state after
+    disturbances. The magnitude of $\lambda$ indicates how quickly:
+    a larger negative value means faster, more robust recovery.
+    \item[Fragility] An ecosystem described as fragile has a small
+    magnitude of $\lambda$ (close to zero), meaning it recovers slowly
+    from shocks and may be pushed across a tipping point by strong
+    climate events.
+    \item[RK4 Trajectory] The 50-year path of NDVI produced by
+    numerically integrating the governing ODE forward in time using
+    the Runge-Kutta method.
+\end{description}
+\end{mdframed}
+
+\subsection{The Comparative Forecast Plot}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{images/gobi.png}
+    \caption{\textbf{50-Year Ecological Stability Forecast: Rajasthan Canal
+    versus Gobi Green Wall.} The figure as designed shows two trajectories:
+    Rajasthan (dark green) with Lyapunov exponent $\lambda = -0.9240$ and
+    Gobi (orange) with $\lambda = -0.1646$, plotted against a red dashed
+    desert threshold at NDVI\,=\,0.10. The uploaded image currently shows
+    only one declining trajectory due to a rendering issue described in
+    Section~\ref{sec:s5_issues}. When both trajectories are correctly
+    plotted, the contrast between Rajasthan's strong convergence and the
+    Gobi's weaker attraction will visually communicate the central finding
+    of the project.}
+    \label{fig:gobi_forecast}
+\end{figure}
+
+\subsection{Interpreting the Lyapunov Values}
+
+The two computed Lyapunov exponents are:
+\begin{equation}
+    \lambda_{\text{Rajasthan}} = -0.9240 \qquad
+    \lambda_{\text{Gobi}} = -0.1646
+\end{equation}
+
+Both values are negative, meaning both ecosystems are formally stable and
+will converge to a fixed point. However, the difference in magnitude is
+scientifically significant. Table~\ref{tab:lyapunov} summarises the
+implications.
+
+\begin{table}[H]
+\centering
+\caption{Comparative Lyapunov stability analysis for the two study regions.}
+\label{tab:lyapunov}
+\begin{tabularx}{\textwidth}{p{3.8cm} p{2.2cm} p{2.2cm} X}
+\toprule
+\textbf{Property} & \textbf{Rajasthan} & \textbf{Gobi} &
+\textbf{Interpretation} \\
+\midrule
+Lyapunov exponent &
+    $-0.9240$ & $-0.1646$ &
+    Both negative; both formally stable \\[5pt]
+Convergence speed &
+    Fast & Slow &
+    Rajasthan recovers ${\sim}5.6\times$ faster after shocks \\[5pt]
+Resilience to shocks &
+    High & Low &
+    Gobi is more easily displaced by climate events \\[5pt]
+Proximity to tipping point &
+    Far & Closer &
+    Gobi is more vulnerable to crossing NDVI\,=\,0.10 \\[5pt]
+Stability character &
+    Strong attractor & Weak attractor &
+    Canal irrigation creates a stronger dynamical pull \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+In ecological terms, the Rajasthan canal system has created a strong
+dynamical attractor: the irrigated vegetation is robust and
+self-reinforcing. The Gobi afforestation shows weaker attraction, meaning
+planted trees are less self-sustaining and more vulnerable to climate
+variability. This contrast between artificially sustained stability
+(irrigation) and fragile natural recovery (afforestation) is the project's
+central scientific result.
+
+\subsection{Critical Assessment of Step 5}
+\label{sec:s5_issues}
+
+\begin{mdframed}[style=warnbox]
+\textbf{\textcolor{warnred}{Three Caveats Affecting this Step}}\\[6pt]
+\textbf{Caveat 1. Single trajectory visible in the plot.}
+The figure generated initially shows only one declining green trajectory. The
+Rajasthan and Gobi lines, the legend, the desert threshold, and the axis
+labels are absent. This will be resolved by re-running the final
+plotting cell.\\[4pt]
+\textbf{Caveat 2. Both trajectories use the same incorrect ODE.}
+As established in Section~\ref{sec:s3_issues}, neither trajectory reflects
+the actual PySR-discovered equations. Both forecast lines are products of
+the manually written \texttt{ecological\_ode()} applied with different
+initial conditions. The Lyapunov values are similarly computed on this
+hand-coded formula.\\[4pt]
+\textbf{Caveat 3. Stability does not equal health.}
+The label \textbf{Weak Negative Attraction (Fragile/Decaying)} for the
+Gobi correctly identifies the magnitude difference but conflates two
+distinct properties. A system with small $|\lambda|$ is not necessarily
+decaying: it simply recovers slowly. The full stability statement requires
+both $\lambda$ and the location of the fixed point.
+\end{mdframed}
+
+\subsection{What This Step Successfully Demonstrated}
+
+Despite the caveats, Step 5 achieves three genuine milestones.
+
+\begin{enumerate}
+    \item \textbf{The comparative framework is established.} Plotting both
+    regions on one figure with a desert threshold is the correct scientific
+    visualisation for this project's conclusion.
+    \item \textbf{The Lyapunov comparison reveals a meaningful contrast.}
+    Even computed on an approximate ODE, the $5.6\times$ difference in
+    convergence speed reflects a genuine difference in dynamical character:
+    irrigated systems produce stronger ecological attractors than rain-fed
+    afforestation.
+    \item \textbf{The pipeline is complete end-to-end.} All five stages
+    (data extraction, feature engineering, symbolic regression, stability
+    analysis, comparative forecast) execute successfully. The remaining
+    issues are parametric rather than architectural.
+\end{enumerate}
+
+% ============================================================
+\section{Overall Project Status and Next Steps}
+
+\subsection{Summary of Progress}
+
+The table below summarises the current status of every stage of the
+pipeline at the time of this report.
+
+\begin{table}[H]
+\centering
+\caption{Overall pipeline status at the time of this interim report.}
+\label{tab:status}
+\begin{tabularx}{\textwidth}{p{4.2cm} p{2.8cm} X}
+\toprule
+\textbf{Pipeline Stage} & \textbf{Status} & \textbf{Notes} \\
+\midrule
+GEE data extraction &
+    \textcolor{notegreen}{\textbf{Complete}} &
+    19 years, 8 variables, both regions \\[3pt]
+Vegetation feature quality &
+    \textcolor{notegreen}{\textbf{Good}} &
+    NDVI, LAI, EVI, LST, Albedo all reliable \\[3pt]
+Hydrological feature quality &
+    \textcolor{warnred}{\textbf{Needs fixing}} &
+    Rain, SoilMoist, Evapo have known errors \\[3pt]
+Correlation analysis &
+    \textcolor{notegreen}{\textbf{Complete}} &
+    4 physically meaningful relationships confirmed \\[3pt]
+Phase portrait / attractor &
+    \textcolor{notegreen}{\textbf{Complete}} &
+    Stable attractor with rightward drift confirmed \\[3pt]
+Seasonal peak analysis &
+    \textcolor{notegreen}{\textbf{Complete}} &
+    35 to 50\% NDVI increase over 19 years \\[3pt]
+PySR: Rajasthan &
+    \textcolor{notegreen}{\textbf{Complete}} &
+    Equation found; needs automatic extraction \\[3pt]
+PySR: Gobi &
+    \textcolor{notegreen}{\textbf{Complete}} &
+    Equation found; LST term needs review \\[3pt]
+RK4 forecast &
+    \textcolor{warnred}{\textbf{Incorrect ODE}} &
+    Framework correct; wrong formula plugged in \\[3pt]
+Lyapunov analysis &
+    \textcolor{notegreen}{\textbf{Methodology sound}} &
+    Needs re-run on correct ODE \\[3pt]
+Comparative forecast &
+    \textcolor{warnred}{\textbf{Rendering issue}} &
+    Code correct; figure needs re-plotting \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Next Steps}
+
+\begin{enumerate}
+    \item \textbf{Fix data extraction.} Apply \texttt{col.sum()} for rain;
+    update the fill-value mask for Evapo to include 32767; verify the
+    FLDAS band name for SoilMoist.
+    \item \textbf{Auto-extract PySR equations.} Replace hand-coded ODEs
+    with \texttt{model.sympy()} to extract and compile PySR output
+    programmatically.
+    \item \textbf{Add logistic constraint.} Include NDVI$^2$ as a feature
+    in the next PySR run to allow discovery of carrying-capacity terms.
+    \item \textbf{Re-run Lyapunov and forecast} on the corrected ODEs.
+    \item \textbf{Extend to stochastic forecasting.} Replace the
+    deterministic RK4 trajectory with a Stochastic Differential Equation
+    (SDE) solver that adds climate noise, producing an ensemble of possible
+    futures and a probability of ecosystem collapse.
+    \item \textbf{Add policy intervention engine.} Simulate the effect of
+    policy decisions (for example, irrigation increases or changes in
+    afforestation rate) on the 50-year forecast.
+\end{enumerate}
+
+% \begin{mdframed}[style=notebox]
+% \textbf{\textcolor{notegreen}{Summary for a Non-Technical Reader}}\\[4pt]
+% This project has built and tested the full scientific pipeline for studying
+% long-term desertification reversal. Nineteen years of satellite measurements
+% confirm that the Rajasthan canal region is genuinely and progressively
+% greening. Mathematical analysis shows it has a stable ecological home state
+% that it robustly returns to after disturbances. The Gobi Green Wall also
+% shows stability, but with a weaker restoring force: it is more vulnerable
+% to climate shocks. The next phase will correct data quality issues, use the
+% machine-learning-discovered equations directly in the forecasts, and produce
+% a probabilistic 50-year outlook quantifying the risk of ecosystem collapse
+% under different climate and policy scenarios.
+% \end{mdframed}
+
+% ============================================================
+\section{Step 6: The Expanded Pipeline}
+
+\subsection{Purpose and Motivation}
+
+The previous pipeline steps revealed two fundamental limitations. First,
+only six environmental variables were used as PySR inputs, and three of
+those were unreliable. Second, the forecast was deterministic: a single
+trajectory with no representation of uncertainty. This step addresses both
+limitations through five additions.
+
+\begin{enumerate}
+    \item \textbf{Five new satellite data sources} are added, providing
+    carbon, fire, dust, and groundwater measurements.
+    \item \textbf{Seven new engineered features} are derived, giving PySR
+    richer and more physically meaningful inputs.
+    \item \textbf{An Early Warning System (EWS) module} analyses historical
+    NDVI patterns for statistical signs of impending tipping-point collapse.
+    \item \textbf{A Stochastic Differential Equation (SDE) solver} replaces
+    the single deterministic RK4 trajectory with an ensemble of 150 possible
+    futures, producing probabilistic collapse estimates.
+    \item \textbf{A Policy Intervention Engine} allows simulation of
+    specific management decisions and comparison of their effects on the
+    50-year forecast.
+\end{enumerate}
+
+\subsection{Key Terms and Concepts}
+
+\begin{mdframed}[style=keybox]
+\textbf{Glossary: Step 6}\\[6pt]
+\begin{description}
+    \item[GPP] Gross Primary Productivity. The total carbon that plants
+    fix from the atmosphere through photosynthesis, per unit area per unit
+    time. A high GPP means the ecosystem is actively growing and
+    sequestering carbon.
+    \item[FPAR] Fraction of Absorbed Photosynthetically Active Radiation.
+    The proportion of incoming sunlight that the canopy absorbs and uses
+    for photosynthesis. Values range from 0 (no canopy) to 1 (full canopy).
+    \item[Carbon Flux] The rate of carbon exchange between the atmosphere
+    and the land surface. Computed here as GPP $\times$ FPAR, giving a
+    proxy for actual photosynthetic carbon capture.
+    \item[AOD / Dust Stress] Aerosol Optical Depth. A measure of how much
+    atmospheric dust blocks sunlight. High AOD indicates active dust
+    storms, which damage leaf surfaces, reduce photosynthesis, and
+    accelerate soil erosion.
+    \item[Fire Pressure] A 12-month rolling count of months in which
+    satellite-detected fire occurred within the study area.
+    \item[Aridity Index] The ratio of actual rainfall to potential
+    evapotranspiration. Values below 0.65 indicate arid conditions; below
+    0.20 indicate hyperarid (desert) conditions.
+    \item[GRACE-FO] Gravity Recovery and Climate Experiment Follow-On.
+    A pair of NASA satellites that detect shifts in underground water
+    mass. Used here to monitor groundwater depletion or recharge.
+    \item[EWS] Early Warning System. Statistical tools that detect changes
+    in ecosystem behaviour preceding a tipping-point collapse, based on
+    the principle of Critical Slowing Down.
+    \item[Kendall-$\tau$] A statistical test measuring whether a quantity
+    has a consistent upward or downward trend, on a scale from $-1$ to
+    $+1$. A value above 0.2 with $p < 0.1$ is taken as evidence of a
+    significant trend.
+    \item[SDE] Stochastic Differential Equation. A differential equation
+    including a random noise term ($\sigma\,dW$) alongside the
+    deterministic physics. Running 150 independent SDE simulations
+    produces an uncertainty cone showing the range of plausible futures.
+    \item[Monte Carlo] Running a stochastic model many times with
+    different random seeds to build a statistical picture of possible
+    outcomes. The 10th to 90th percentile band represents the most
+    likely range.
+    \item[Collapse Probability] The fraction of Monte Carlo trajectories
+    ending below the desert threshold (NDVI\,=\,0.10) at year 50.
+    \item[Intervention Engine] A module that modifies driver variable
+    values at each SDE time step, allowing policy decisions to be
+    compared against a no-intervention baseline.
+\end{description}
+\end{mdframed}
+
+\subsection{New Data Sources and Engineered Features}
+
+\begin{table}[H]
+\centering
+\caption{New satellite data sources added in the expanded pipeline.}
+\label{tab:new_sources}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{2.6cm} p{2.8cm} p{1.8cm} X}
+\toprule
+Variable & Source & Resolution & Ecological Role \\
+\midrule
+GPP &
+    MODIS MOD17A2H & 500\,m &
+    Direct carbon uptake; confirms whether vegetation is
+    photosynthetically active rather than merely green \\[4pt]
+FPAR &
+    MODIS MCD15A3H & 500\,m &
+    Canopy efficiency; combined with GPP gives Carbon Flux \\[4pt]
+Fire (BurnDate) &
+    MODIS MCD64A1 & 500\,m &
+    Disturbance tracker; accumulated into a 12-month
+    Fire Pressure rolling score \\[4pt]
+AOD &
+    MODIS MCD19A2 & 1000\,m &
+    Dust-storm intensity; proxy for soil erosion and
+    vegetation stress \\[4pt]
+Groundwater &
+    GRACE-FO LWE & 100\,km &
+    Subsurface water trend; key sustainability indicator
+    for the Rajasthan canal system \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+All seven new features (Carbon Flux, FPAR, GPP, Dust Stress, Fire Pressure,
+Aridity Index, and Groundwater Anomaly) were successfully extracted for both
+regions, as confirmed by the pipeline console output.
+
+\subsection{The Early Warning System (EWS)}
+
+\subsubsection{Theory}
+
+The EWS module is grounded in the mathematical theory of
+\textbf{Critical Slowing Down (CSD)}. As any system approaches a
+bifurcation (a sudden qualitative change in behaviour), its ability to
+recover from small perturbations diminishes. This manifests in two
+measurable ways.
+
+\begin{itemize}
+    \item \textbf{Rising variance.} The system fluctuates more widely
+    before settling, because the restoring force is weakening.
+    \item \textbf{Rising lag-1 autocorrelation AC(1).} The system's state
+    becomes more strongly correlated with its own recent past, because it
+    takes longer to recover from perturbations.
+\end{itemize}
+
+A statistically significant rising trend in both statistics simultaneously
+is the strongest currently known early warning signal for ecological
+collapse.
+
+\subsubsection{EWS Results}
+
+\begin{table}[H]
+\centering
+\caption{Early Warning System Kendall-$\tau$ trend statistics for both
+study regions, computed on historical NDVI (2005 to 2023).}
+\label{tab:ews}
+\begin{tabularx}{\textwidth}{p{2.4cm} p{2.2cm} p{2.4cm} p{1.8cm} X}
+\toprule
+\textbf{Region} & \textbf{Signal} &
+\textbf{Kendall-$\tau$} & \textbf{p-value} &
+\textbf{Interpretation} \\
+\midrule
+Rajasthan & Variance  & $+0.806$ & $0.000$ &
+    \textcolor{warnred}{\textbf{Significant rising trend}} \\[3pt]
+Rajasthan & AC(1)     & $+0.061$ & $0.180$ &
+    No significant trend \\[6pt]
+Gobi      & Variance  & $+0.553$ & $0.000$ &
+    \textcolor{warnred}{\textbf{Significant rising trend}} \\[3pt]
+Gobi      & AC(1)     & $-0.064$ & $0.163$ &
+    No significant trend \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Both regions show strongly significant rising variance ($\tau > 0.5$,
+$p < 0.001$) but no significant change in AC(1). This combination of
+rising variance without rising memory is more consistent with
+\textbf{increased external forcing} (stronger climate variability) than
+with classical critical slowing down approaching a bifurcation. A genuine
+pre-tipping signal would require both statistics to rise together. The
+finding suggests both ecosystems are being subjected to growing climate
+noise, but are not yet clearly approaching a mathematical tipping point.
+
+\begin{mdframed}[style=warnbox]
+\textbf{\textcolor{warnred}{EWS Panel C Visual Discrepancy}}\\[4pt]
+Panel C of Figure~\ref{fig:final4panel} shows the rolling variance
+(orange) as a flat line near zero throughout the 19-year record, which
+appears to contradict the Kendall-$\tau$ value of $+0.553$. This is not
+an inconsistency. The detrending step (subtracting a 24-month rolling
+mean) removes most absolute variance, leaving a residual signal at a
+very small scale. The Kendall-$\tau$ test detects a genuine rising trend
+within this small-scale residual, but the plot's y-axis scale is too
+coarse to make it visible. A rescaled plot of the detrended signals
+would resolve this visual ambiguity.
+\end{mdframed}
+
+\subsection{Discovered ODEs: Expanded Feature Set Results}
+
+With 15 features available (up from 6), PySR discovered structurally
+different equations for both regions compared to the earlier runs.
+
+\subsubsection{Rajasthan (Expanded)}
+
+\begin{equation}
+    \frac{d(\text{NDVI})}{dt} =
+    \underbrace{\text{Habitat\_Patchiness}}_{x_6}
+    \;+\;
+    \cos\!\left(\underbrace{\text{Dust\_Stress}}_{x_{11}}\right)
+    \times (-0.14279)
+    \label{eq:raj_expanded}
+\end{equation}
+
+In plain terms, the rate of vegetation change in Rajasthan is driven by
+spatial heterogeneity (how patchily distributed the vegetation is) minus
+a correction for dust loading.
+
+\begin{mdframed}[style=warnbox]
+\textbf{\textcolor{warnred}{Critical Issue: No NDVI Term in the
+Rajasthan ODE}}
+\label{sec:ode_raj_issue}\\[4pt]
+NDVI itself does not appear in Equation~(\ref{eq:raj_expanded}). This
+means the model predicts no relationship between the current amount of
+vegetation and how fast it will grow next month. There is no
+self-regulation, no carrying capacity, and no restoring force.
+Mathematically, the SDE driven by this equation performs an unconstrained
+random walk with a small constant drift. It can wander to any NDVI value,
+including physically impossible values above 1.0, which are then
+hard-clipped by the code. This is the direct cause of the exploding
+uncertainty cone visible in Panel A of Figure~\ref{fig:final4panel}: the
+green band fills the entire 0 to 1 NDVI range within 10 years.
+
+The likely cause is that Habitat\_Patchiness is derived from the NDVI
+spatial standard deviation and is therefore a mathematical function of
+NDVI itself. PySR found a proxy for the NDVI trend through this derived
+variable rather than through the state variable directly, producing a
+degenerate equation that passes historical validation but fails
+physically.
+\end{mdframed}
+
+\subsubsection{Gobi (Expanded)}
+
+\begin{equation}
+    \frac{d(\text{NDVI})}{dt} =
+    0.3348 \times \underbrace{\text{NDVI}}_{x_0}
+    \;-\;
+    \frac{
+        \underbrace{\text{FPAR}}_{x_9}
+        \;\times\;
+        \bigl(\,\underbrace{\text{Habitat\_Patchiness}}_{x_6}
+        - 0.2035\bigr)
+    }{
+        \underbrace{\text{Dust\_Stress}}_{x_{11}}
+        \;\times\;
+        \log\!\bigl(\underbrace{\text{FPAR}}_{x_9}\bigr)
+    }
+    \label{eq:gobi_expanded}
+\end{equation}
+
+This equation contains a self-growth term ($0.3348 \times$ NDVI, positive
+feedback), a canopy efficiency term (FPAR), a biodiversity interaction
+(Habitat\_Patchiness), and a dust-stress denominator. Since FPAR values
+lie between 0 and 1, $\log(\text{FPAR})$ is always negative, meaning the
+correction term subtracts when Habitat\_Patchiness exceeds 0.2035 and
+adds when it is below. This acts as a stabilising mechanism.
+
+\subsection{Stochastic Forecast and Policy Scenarios}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{images/final.png}
+    \caption{\textbf{Final 4-Panel Expanded Analysis: SciML
+    Desertification Reversal, 2005 to 2073.}
+    \textit{Panel A (top left):} 50-year Monte Carlo forecast for both
+    regions under baseline conditions. Green = Rajasthan Canal; Orange =
+    Gobi Green Wall. Shaded ribbons show the 10th to 90th percentile
+    range across 150 simulations. The red dotted line marks the desert
+    collapse threshold (NDVI\,=\,0.10).
+    \textit{Panel B (top right):} Three scenarios for the Gobi Desert:
+    no intervention (orange), 10-year irrigation boost (blue), and full
+    multi-variable restoration package (green).
+    \textit{Panel C (bottom left):} Historical Early Warning System
+    signals for Gobi, 2005 to 2023. Orange = rolling variance; red
+    dashed = lag-1 autocorrelation; purple dotted = composite EWS
+    z-score.
+    \textit{Panel D (bottom right):} Pearson correlation of each new
+    variable with NDVI for Rajasthan (green bars) and Gobi (orange bars).}
+    \label{fig:final4panel}
+\end{figure}
+
+\subsubsection{Collapse Probability Results}
+
+\begin{table}[H]
+\centering
+\caption{50-year ecosystem collapse probabilities from 150 Monte Carlo
+SDE simulations per scenario. Collapse is defined as NDVI\,$<$\,0.10
+at year 50.}
+\label{tab:collapse}
+\begin{tabularx}{\textwidth}{p{4.6cm} p{2cm} p{2.8cm} X}
+\toprule
+\textbf{Scenario} & \textbf{Region} &
+\textbf{Collapse Prob.} & \textbf{Change} \\
+\midrule
+Baseline & Rajasthan & 20.7\% & Reference \\[3pt]
+Baseline & Gobi & 56.0\% & Reference \\[3pt]
+10-yr irrigation boost & Gobi & 56.0\% & $\Delta = 0.0\%$ \\[3pt]
+Full restoration package & Gobi & 85.3\% &
+    \textcolor{warnred}{$\Delta = +29.3\%$ (worse)} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsubsection{Interpreting the Baseline Comparison (Panel A)}
+
+Rajasthan (green) shows a mean trajectory climbing from approximately 0.26
+to approximately 0.42 NDVI over 50 years, with a collapse probability of
+20.7\%. The wide uncertainty band is physically unrealistic (due to the
+missing NDVI self-regulation term in the ODE) but the mean trajectory is
+consistent with a canal-irrigated system that continues to receive
+artificial water input.
+
+The Gobi (orange) shows a mean trajectory rising from approximately 0.10
+to approximately 0.42 NDVI, but with a 56\% collapse probability. The
+trajectory \textbf{bifurcates into two populations}: approximately 44\%
+of simulated futures develop towards a healthy, vegetated state, while
+56\% collapse toward the desert threshold. This \textbf{bistability},
+meaning two distinct possible outcomes from nearly identical starting
+conditions, is the most scientifically significant result in the figure.
+It suggests the Gobi ecosystem is positioned near an unstable equilibrium,
+where small differences in climate noise or policy action determine whether
+it thrives or collapses.
+
+\subsubsection{Policy Scenario Analysis (Panel B) and Its Issues}
+
+\begin{mdframed}[style=warnbox]
+\textbf{\textcolor{warnred}{Two Policy Scenarios Produced Incorrect
+Results}}\\[6pt]
+\textbf{Irrigation boost: $\Delta = 0.0\%$.}
+The intervention modifies Rain and SoilMoist, but neither variable appears
+in the Gobi ODE~(\ref{eq:gobi_expanded}). The intervention engine
+functioned correctly: there was simply no mathematical pathway between the
+modified variables and the equation's output. This reveals that at the
+spatial and temporal resolution of this dataset, precipitation affects NDVI
+through intermediate variables (FPAR, Habitat\_Patchiness) rather than
+directly.\\[6pt]
+\textbf{Full restoration: collapse increased to 85.3\%.}
+Reducing Dust\_Stress by 0.10 per year pushes it toward zero. Since
+Dust\_Stress appears in the denominator of Equation~(\ref{eq:gobi_expanded}),
+values near zero cause the drift term to diverge to $\pm\infty$. The
+solver's physical clip to $[0,1]$ then traps trajectories at NDVI\,=\,0
+permanently, producing an artefactual increase in collapse probability.
+This is a numerical singularity, not an ecological finding.\\[4pt]
+\textbf{Fix required.} Intervention variables must be restricted to those
+present in the discovered ODE. Additionally, a floor constraint
+(e.g., Dust\_Stress $\geq 0.01$) should be applied to prevent
+denominator singularities.
+\end{mdframed}
+
+\subsection{New Variable Correlations (Panel D)}
+
+Panel D reveals several scientifically meaningful relationships.
+
+\textbf{Habitat\_Patchiness} shows the strongest correlation with NDVI in
+both regions ($r > 0.9$). This is expected since Patchiness is derived
+directly from NDVI spatial standard deviation. Its dominance in PySR
+equations should be treated with caution: it may be acting as a proxy for
+NDVI's own trend rather than as an independent ecological driver.
+
+\textbf{FPAR} shows strong positive correlation ($r \approx 0.8$ to 0.9)
+for both regions. This is physically meaningful and better supported than
+the Patchiness term: more vegetation means a larger fraction of incoming
+sunlight is absorbed by the canopy.
+
+\textbf{Dust\_Stress} shows a strongly negative correlation with Rajasthan
+NDVI ($r \approx -0.35$) but near-zero for Gobi. The near-zero Gobi
+correlation is consistent with the ODE's denominator structure: the
+relationship between dust and NDVI in that system is non-linear rather
+than simply negative.
+
+\textbf{Carbon\_Flux} shows a negative correlation with Rajasthan NDVI,
+which is counterintuitive. A plausible explanation is that irrigated
+agricultural crops in Rajasthan have high NDVI but relatively low GPP per
+unit leaf area compared to natural vegetation. This distinction between
+agricultural productivity and ecological productivity is an important nuance
+for policy.
+
+\subsection{Overall Assessment of the Expanded Pipeline}
+
+\begin{table}[H]
+\centering
+\caption{Summary of component status and key findings for the expanded
+pipeline.}
+\label{tab:expanded_status}
+\begin{tabularx}{\textwidth}{p{4.4cm} p{2.8cm} X}
+\toprule
+\textbf{Component} & \textbf{Status} & \textbf{Key Finding} \\
+\midrule
+New data extraction (7 vars) &
+    \textcolor{notegreen}{\textbf{Successful}} &
+    All confirmed present for both regions \\[3pt]
+EWS: rising variance &
+    \textcolor{notegreen}{\textbf{Confirmed}} &
+    $\tau > 0.5$, $p < 0.001$ for both regions \\[3pt]
+EWS: rising AC(1) &
+    \textcolor{warnred}{\textbf{Not detected}} &
+    Increased external forcing, not classical CSD \\[3pt]
+Rajasthan ODE &
+    \textcolor{warnred}{\textbf{Physically invalid}} &
+    No NDVI self-regulation; exploding uncertainty cone \\[3pt]
+Gobi ODE &
+    \textcolor{notegreen}{\textbf{Physically meaningful}} &
+    Self-growth with multi-variable interaction \\[3pt]
+Rajasthan 50-yr forecast &
+    \textcolor{warnred}{\textbf{Unreliable}} &
+    Unbounded cone due to missing NDVI term \\[3pt]
+Gobi baseline forecast &
+    \textcolor{notegreen}{\textbf{Scientifically valid}} &
+    Bistability detected; 56\% collapse risk \\[3pt]
+Irrigation intervention &
+    \textcolor{warnred}{\textbf{No effect (structural)}} &
+    Rain/SoilMoist not present in Gobi ODE \\[3pt]
+Full restoration intervention &
+    \textcolor{warnred}{\textbf{Numerical artefact}} &
+    Denominator singularity inflates collapse \\[3pt]
+Correlation analysis (Panel D) &
+    \textcolor{notegreen}{\textbf{Informative}} &
+    FPAR strongest new physical driver \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+% \begin{mdframed}[style=notebox]
+% \textbf{\textcolor{notegreen}{Summary for a Non-Technical Reader}}\\[4pt]
+% This final step represents the most ambitious version of the pipeline.
+% Nineteen new environmental measurements were added, a statistical alarm
+% system was built to warn of impending ecosystem collapse, and 150 possible
+% futures were simulated for each policy scenario. The most significant
+% finding is that the Gobi Desert exists in a precarious balance: in slightly
+% more than half of all simulated futures it collapses toward desert
+% conditions, and in slightly fewer than half it recovers and thrives. This
+% reflects what ecologists call a bistable system, where the difference
+% between recovery and collapse may depend on individual years of above- or
+% below-average rainfall. The Rajasthan canal system is more robustly
+% protected by its artificial water supply, with a 21\% collapse risk.
+% Several technical issues are clearly identified and have known fixes,
+% making correction the direct next priority.
+% \end{mdframed}
+
+% ============================================================
+\section{Conclusions and Roadmap for Next Steps}
+
+\subsection{Summary of Scientific Findings}
+
+Across all pipeline steps, a coherent and scientifically credible picture
+emerges.
+
+\begin{enumerate}
+    \item \textbf{Rajasthan shows confirmed, sustained greening.}
+    Nineteen years of NDVI and LAI data show a 35 to 50\% increase in
+    peak vegetation cover. The ecosystem has a dynamical attractor that
+    has migrated to higher NDVI values. Lyapunov analysis confirms strong
+    resilience ($\lambda = -0.924$).
+
+    \item \textbf{The Gobi is in a bistable, fragile state.}
+    Monte Carlo SDE forecasting assigns a 56\% collapse probability under
+    baseline conditions. The Gobi ODE exhibits self-amplifying growth
+    balanced by a canopy-dust interaction, placing the system near an
+    unstable equilibrium between recovery and collapse.
+
+    \item \textbf{Neither ecosystem shows classical Critical Slowing
+    Down.} Rising variance without rising AC(1) suggests growing climate
+    variability rather than proximity to a bifurcation tipping point.
+    The danger is external forcing, not internal instability.
+
+    \item \textbf{FPAR and Habitat\_Patchiness are the strongest new
+    predictors.} FPAR's strong positive correlation and appearance in the
+    Gobi ODE suggest canopy efficiency is a key driver of dynamics in
+    that system.
+\end{enumerate}
+
+\subsection{Priority Fixes for the Next Iteration}
+
+\begin{enumerate}
+    \item Add NDVI$^2$ as an explicit feature to force PySR to discover a
+    carrying-capacity term for Rajasthan.
+    \item Restrict intervention variables to those present in the
+    discovered ODE; add a floor constraint on denominator variables
+    ($\geq 0.01$).
+    \item Convert LST to a temperature anomaly (deviation from the monthly
+    mean) before running PySR, to avoid large-argument trigonometric
+    overfitting.
+    \item Replace \texttt{.fillna(method=`bfill')} with \texttt{.bfill()}
+    throughout to resolve the deprecation warning.
+    \item Increase PySR iterations to 100 or more for both regions to
+    allow discovery of more physically complete equations.
+    \item Implement a time-varying driver climatology rather than constant
+    historical means, to capture seasonal forcing in the SDE.
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,42 @@
+{
+  "collapse_probability_ever": {
+    "rajasthan": {
+      "baseline": 0.9666666666666667,
+      "canal_boost": 0.9533333333333334,
+      "drought": 0.98
+    },
+    "gobi": {
+      "baseline": 1.0,
+      "irrigation_boost": 1.0,
+      "restoration": 0.94
+    }
+  },
+  "collapse_probability_terminal": {
+    "rajasthan": {
+      "baseline": 0.17333333333333334,
+      "canal_boost": 0.17333333333333334,
+      "drought": 0.22666666666666666
+    },
+    "gobi": {
+      "baseline": 0.3933333333333333,
+      "irrigation_boost": 0.38666666666666666,
+      "restoration": 0.24
+    }
+  },
+  "lyapunov": {
+    "rajasthan": -0.06666259262435063,
+    "gobi": -0.0484288637243008
+  },
+  "selection_tier": {
+    "rajasthan": 1,
+    "gobi": 1
+  },
+  "fit_r2": {
+    "rajasthan": 0.0627266236179157,
+    "gobi": 0.07740105132840602
+  },
+  "equations": {
+    "rajasthan": "(NDVI - 0.25917268)*(-0.06666259)*cos(Temp_Delta_anom/((-0.4410327)*Dust_Stress))",
+    "gobi": "-Albedo*NDVI_sq*(2.1570117 - exp(Rain_norm)) + Dust_Stress*0.0132204965"
+  }
+}
