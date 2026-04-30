@@ -1,4 +1,4 @@
-<![CDATA[# 🌍 Scientific Machine Learning for Desertification Reversal Stability
+Scientific Machine Learning for Desertification Reversal Stability
 
 > A modular SciML pipeline that discovers governing differential equations from satellite data to assess whether large-scale desertification reversal efforts produce **stable ecological attractors** or **fragile states** vulnerable to collapse under future climate stress.
 
@@ -315,4 +315,3 @@ If you use this work, please cite:
 ## License
 
 This project is developed as an academic research project. Please contact the author for usage permissions.
-]]>
