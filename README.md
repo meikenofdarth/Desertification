@@ -254,12 +254,6 @@ Desertification/
 | Rajasthan | −0.036 | Stable | Rising variance only |
 | Gobi | −0.045 | Stable | Rising variance only |
 
-### Key Finding
-
-**Carrying-capacity interventions consistently outperform forcing-only interventions.** Canal boost eliminates Rajasthan's collapse risk entirely (8.7% → 0%), while Gobi full restoration reduces ever-collapse from 93.3% to 10.0%. By contrast, irrigation alone reduces Gobi collapse only marginally (93.3% → 78.0%).
-
----
-
 ## Methodology
 
 ### Theoretical Pillars
@@ -294,24 +288,3 @@ The pipeline evolved through **54 named corrective fixes** (FIX-A through FIX-BD
 
 The model is best understood as a **decision-support framework for comparative risk ranking**, not a precise deterministic predictor.
 
----
-
-## Citation
-
-If you use this work, please cite:
-
-```bibtex
-@misc{dogra2026desertification,
-  author       = {Dogra, Sanchit Kumar},
-  title        = {Scientific Machine Learning for the Analysis of Long-Term Desertification Reversal Stability},
-  year         = {2026},
-  institution  = {Semester 8 Final Project},
-  howpublished = {\url{https://github.com/meikenofdarth/Desertification}}
-}
-```
-
----
-
-## License
-
-This project is developed as an academic research project. Please contact the author for usage permissions.
