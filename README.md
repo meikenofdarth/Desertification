@@ -286,5 +286,5 @@ The pipeline evolved through **54 named corrective fixes** (FIX-A through FIX-BD
 - **Missing irrigation data:** Rajasthan's primary driver (canal water delivery) is not directly measured in satellite data
 - **Monthly resolution:** Rapid ecological responses are averaged out at monthly time steps
 
-The model is best understood as a **decision-support framework for comparative risk ranking**, not a precise deterministic predictor.
+The model is best understood as a **decision-support framework for comparative risk ranking**, not a precise deterministic predictor..
 
