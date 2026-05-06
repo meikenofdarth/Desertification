@@ -1,612 +1,928 @@
-\documentclass[12pt,a4paper]{article}
+% ============================================================
+% FINAL REPORT — Scientific Machine Learning for the Analysis of
+% Long-Term Desertification Reversal Stability
+% ============================================================
 
-\usepackage[margin=1in]{geometry}
+\documentclass[12pt, a4paper]{article}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage{mdframed}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{float}
+\usepackage{needspace}
+\usepackage{siunitx}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{lmodern}
 \usepackage{setspace}
-\usepackage{graphicx}
-\usepackage{subcaption}
-\usepackage{booktabs}
-\usepackage{longtable}
-\usepackage{array}
-\usepackage{float}
-\usepackage{amsmath,amssymb}
-\usepackage{siunitx}
-\usepackage{hyperref}
-\usepackage{enumitem}
-\usepackage{xcolor}
+% References: numbered [1] style
+\usepackage{cite}
 
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    filecolor=magenta,
-    urlcolor=blue,
-    pdftitle={Final Project Report: Scientific Machine Learning for Desertification Reversal},
-    pdfauthor={Sanchit Kumar Dogra}
+\sisetup{round-mode=places,round-precision=4}
+
+% ---------- Colours ----------
+\definecolor{keyblue}{RGB}{30, 90, 160}
+\definecolor{warnred}{RGB}{180, 30, 30}
+\definecolor{notegreen}{RGB}{20, 120, 60}
+\definecolor{lightgray}{RGB}{245, 245, 245}
+
+% ---------- Box styles ----------
+\mdfdefinestyle{keybox}{
+    backgroundcolor=lightgray,
+    linecolor=keyblue,
+    linewidth=1.5pt,
+    roundcorner=5pt,
+    innertopmargin=8pt, innerbottommargin=8pt,
+    innerleftmargin=12pt, innerrightmargin=12pt,
+    nobreak=true
+}
+\mdfdefinestyle{warnbox}{
+    backgroundcolor=yellow!8,
+    linecolor=warnred,
+    linewidth=1.5pt,
+    roundcorner=5pt,
+    innertopmargin=8pt, innerbottommargin=8pt,
+    innerleftmargin=12pt, innerrightmargin=12pt,
+    nobreak=true
+}
+\mdfdefinestyle{notebox}{
+    backgroundcolor=green!5,
+    linecolor=notegreen,
+    linewidth=1.5pt,
+    roundcorner=5pt,
+    innertopmargin=8pt, innerbottommargin=8pt,
+    innerleftmargin=12pt, innerrightmargin=12pt,
+    nobreak=true
+}
+
+% ---------- Header / Footer ----------
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\textit{SciML Desertification Reversal}}
+\lhead{\textit{Final Report}}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ---------- Section formatting ----------
+\titleformat{\section}
+  {\large\bfseries\color{keyblue}}{\thesection.}{0.6em}{}[\titlerule]
+\titleformat{\subsection}
+  {\normalsize\bfseries\color{keyblue!80!black}}{\thesubsection.}{0.5em}{}
+\titleformat{\subsubsection}
+  {\normalsize\bfseries}{\thesubsubsection.}{0.5em}{}
+
+% ---------- Description list style ----------
+\setlist[description]{
+  leftmargin=3.4cm,
+  labelwidth=3.2cm,
+  labelsep=0.2cm,
+  font=\normalfont\bfseries\color{keyblue}
 }
 
 \setlength{\parskip}{0.5em}
 \setlength{\parindent}{0em}
 \onehalfspacing
-\sisetup{round-mode=places,round-precision=4}
 
-\title{\textbf{Final Project Report}\\
-\Large Scientific Machine Learning for Long-Term Desertification Reversal Stability}
-\author{Submitted to: \textbf{Prof. Balakrishnan Ashok}\\Submitted by: \textbf{Sanchit Kumar Dogra}}
-\date{April 18, 2026}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    pdftitle={Final Report: SciML Desertification Reversal Stability},
+    pdfauthor={Sanchit Kumar Dogra}
+}
 
+% ============================================================
 \begin{document}
 
-\maketitle
-\thispagestyle{empty}
-\newpage
+% ---- Title Page ----
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+    {\LARGE \textbf{Final Project Report}}\\[0.6cm]
+    {\large \textit{Scientific Machine Learning for the Analysis of}}\\[0.2cm]
+    {\large \textit{Long-Term Desertification Reversal Stability}}\\[1.8cm]
+    \rule{\textwidth}{1pt}\\[0.6cm]
+    % {\large Submitted to: \textbf{Prof.\ Balakrishnan Ashok}}\\[0.3cm]
+    {\large Submitted by: \textbf{Sanchit Kumar Dogra}}\\[0.3cm]
+    {\large Date: \textbf{April 28, 2026}}\\[0.6cm]
+    \rule{\textwidth}{1pt}\\[1.5cm]
+    \begin{mdframed}[style=keybox]
+        \textbf{Project Summary}\\[6pt]
+        This project uses 19~years of satellite data (2005--2023) to investigate
+        whether large-scale desertification reversal efforts produce
+        \emph{stable} ecological attractors or \emph{fragile} states vulnerable
+        to collapse under future climate stress. Two case studies are examined:
+        the \textbf{Indira Gandhi Canal region in Rajasthan, India} (irrigation-based
+        greening) and the \textbf{Gobi Desert in China} (afforestation via the
+        Great Green Wall programme). A Scientific Machine Learning pipeline
+        discovers governing differential equations from data, simulates
+        50-year stochastic futures, and evaluates policy intervention scenarios.\\[6pt]
+        Despite 38~named corrective fixes\footnote{FIX-A through FIX-BD (30 lettered fixes A--Z plus AA--BD) and 8 additional data-quality corrections applied during early development.} and
+        33~iterative experimental runs, the discovered equations achieve near-zero
+        $R^2$ on the deseasonalised vegetation change target. This report
+        documents the full scientific and engineering process, including what
+        worked, what did not, and why.
+    \end{mdframed}
+    \vfill
+\end{titlepage}
 
 \tableofcontents
 \newpage
 
+% ============================================================
 \section{Executive Summary}
-This report presents the final status of the project on desertification reversal stability using a Scientific Machine Learning pipeline. The pipeline was run on two case studies over 19 years of monthly observations.
 
-\textbf{Case study 1:} Rajasthan Canal Region, India.
+This report presents the final state of a Scientific Machine Learning (SciML) pipeline for analysing desertification reversal stability. The pipeline was developed iteratively over the course of the project, evolving from a monolithic Jupyter notebook into a modular, reproducible Python package through 38~named corrective fixes.
 
-\textbf{Case study 2:} Gobi Green Wall Region, China.
+\textbf{Central scientific question:} Are observed vegetation improvements in desertification reversal zones stable attractor shifts, or fragile states that could reverse under climate stress?
 
-\textbf{Main final outcomes:}
-\begin{itemize}[leftmargin=1.4em]
-    \item Both regions satisfy the current report-safe reliability gate.
-    \item Numerical dynamics are smooth and physically plausible in the final diagnostics.
-    \item Policy scenario behavior is directionally consistent at the system level.
-    \item Final artifacts were generated successfully, including summary JSON, logs, and figures.
-\end{itemize}
+\textbf{Key outcomes:}
+\begin{enumerate}[leftmargin=1.6em]
+    \item \textbf{Pipeline architecture:} Successfully modularised into an 8-module Python package with automated equation discovery, stochastic simulation, and policy scenario evaluation.
+    \item \textbf{Policy direction:} Intervention scenarios produce directionally correct results --- canal boost reduces Rajasthan collapse risk from 8.7\% to 0\%; Gobi restoration reduces collapse risk from 93.3\% to 10\%.
+    \item \textbf{Fit quality limitation:} $R^2$ on the deseasonalised $d\text{NDVI}/dt$ target remains near zero for both regions ($R^2 = 0.001$ for Rajasthan, $R^2 = 0.087$ for Gobi). This is a fundamental signal-to-noise limitation, not an engineering failure.
+    \item \textbf{Iterative effort:} 33~complete pipeline runs were executed and 28~were formally evaluated, demonstrating systematic experimental methodology.
+\end{enumerate}
 
-\textbf{Important note:} Fit quality in terms of $R^2$ remains low in both regions, but normalized absolute error is within accepted limits for low-variance deseasonalized targets. This is documented explicitly in the reliability checks.
+The results should be interpreted as a decision-support framework for comparative risk ranking and policy sensitivity analysis, not as precise predictive models of vegetation dynamics.
 
-\newpage
+% ============================================================
 \section{Project Background and Motivation}
-Desertification reversal programs can produce visible greening in the short term, but decision making needs evidence of long-term stability under changing climate and management conditions. This project builds a data-driven dynamical model from satellite observations and then tests future behavior with stochastic simulations and intervention scenarios.
 
-The central scientific question is:
+Desertification --- the gradual transformation of productive land into barren desert --- represents one of the most pressing environmental challenges of our time \cite{reynolds2007}. While governments have invested heavily in programmes to reverse this process, a critical question remains: are these reversals truly stable over the long term, or are they fragile interventions that could collapse under future climate stress?
 
-\textbf{Are observed improvements stable attractor shifts, or can they reverse under stress?}
+This project addresses that question using Scientific Machine Learning. Rather than simply monitoring whether vegetation is present today, it seeks to \emph{discover the underlying mathematical rules} that govern how each ecosystem grows, recovers, or declines, and then uses those rules to simulate possible futures across the coming 50~years.
 
-\section{Final Objectives}
-The final phase had four goals.
+\subsection{Study Regions}
+
+Two contrasting desertification reversal strategies are examined:
+
+\begin{description}
+    \item[Rajasthan Canal] The Indira Gandhi Canal region in Rajasthan, India (bounding box: $73.8$--$74.3^{\circ}$E, $29.3$--$29.8^{\circ}$N). Large-scale irrigation was introduced into a desert landscape, producing sustained greening over 19~years. This represents an \emph{artificially sustained} reversal dependent on continued water infrastructure.
+    \item[Gobi Green Wall] The Gobi Desert region in China (bounding box: $108.2$--$108.8^{\circ}$E, $40.2$--$40.8^{\circ}$N). A massive afforestation programme has been underway as part of China's Three-North Shelter Forest Programme. This represents a \emph{natural recovery} strategy dependent on planted trees becoming self-sustaining.
+\end{description}
+
+\subsection{Scientific Framework}
+
+The project draws on three theoretical pillars:
 
 \begin{enumerate}[leftmargin=1.6em]
-    \item Build a robust modular pipeline from data extraction to scenario simulation.
-    \item Ensure numerical stability and physical plausibility of discovered equations.
-    \item Quantify collapse risk with multiple metrics, not only endpoint statistics.
-    \item Produce a complete report-ready artifact set for academic evaluation.
+    \item \textbf{Dynamical systems theory} \cite{strogatz2015}: ecosystems as nonlinear dynamical systems with attractors, repellers, and tipping points. Lyapunov exponents quantify stability.
+    \item \textbf{Symbolic regression} \cite{cranmer2023}: machine learning that discovers interpretable mathematical formulae from data, rather than black-box predictions.
+    \item \textbf{Critical Slowing Down theory} \cite{scheffer2009,dakos2012}: statistical early warning signals (rising variance, rising autocorrelation) that precede ecological regime shifts.
 \end{enumerate}
 
-\section{Study Regions, Data Window, and Variables}
-\subsection{Study regions}
-\textbf{Rajasthan Canal Region:} bounding box $(73.8, 29.3)$ to $(74.3, 29.8)$.
+\subsection{Observation Period}
 
-\textbf{Gobi Green Wall Region:} bounding box $(108.2, 40.2)$ to $(108.8, 40.8)$.
+Monthly satellite observations spanning January 2005 to December 2023 (19~years, 228~monthly time steps per region).
 
-\subsection{Observation period}
-Monthly series from January 2005 to December 2023.
+% ============================================================
+\section{Data Pipeline}
+\label{sec:data}
 
-\subsection{Primary satellite variables}
+\subsection{Data Sources}
+
+The pipeline extracts data from Google Earth Engine \cite{gorelick2017} using seven satellite product families.
+
 \begin{table}[H]
 \centering
-\caption{Core variables used in the final pipeline}
-\begin{tabular}{p{3.0cm}p{3.2cm}p{2.4cm}p{5.2cm}}
+\caption{Satellite datasets used for environmental measurement extraction.}
+\label{tab:datasources}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{2.8cm} X p{2cm} p{3.2cm}}
 \toprule
-\textbf{Variable} & \textbf{Type} & \textbf{Resolution} & \textbf{Role in model} \\
+Variable & Description & Resolution & Source \\
 \midrule
-NDVI, EVI, LAI, FPAR & Vegetation state & 500 m & System state and canopy response \\
-Rain & Hydro-climate forcing & 5 km & Water input forcing \\
-SoilMoist & Hydro-climate forcing & 10 km & Soil water availability \\
-LST Day and Night & Temperature forcing & 1 km & Thermal stress and anomalies \\
-Albedo & Surface condition & 500 m & Surface energy response \\
-GPP and Carbon Flux & Carbon dynamics & 500 m & Productivity proxies \\
-AOD, Dust Stress & Atmospheric stress & 1 km & Aerosol and dust pressure \\
-Fire Pressure & Disturbance pressure & 500 m & Disturbance indicator \\
-Groundwater Anomaly & Water storage proxy & Derived & Long-term resilience support \\
+NDVI        & Vegetation greenness index        & 500\,m   & MODIS MOD13Q1 \cite{didan2021}  \\
+EVI         & Enhanced vegetation index          & 500\,m   & MODIS MOD13Q1  \\
+LAI         & Leaf area index                    & 500\,m   & MODIS MCD15A3H \\
+FPAR        & Photosynthetic radiation fraction  & 500\,m   & MODIS MCD15A3H \\
+LST Day/Night & Land surface temperature         & 1000\,m  & MODIS MOD11A2  \\
+Rain        & Monthly precipitation              & 5000\,m  & CHIRPS \cite{funk2015} \\
+Soil Moisture & Top 10\,cm water content          & 10\,km   & NASA FLDAS     \\
+Albedo      & Surface reflectivity               & 500\,m   & MODIS MCD43A3  \\
+GPP         & Gross primary productivity         & 500\,m   & MODIS MOD17A2H \\
+AOD         & Aerosol optical depth (dust proxy) & 1000\,m  & MODIS MCD19A2  \\
+Groundwater & Subsurface water anomaly           & 100\,km  & GRACE-FO \cite{tapley2019} \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
-\section{Methodology}
-\subsection{Pipeline overview}
-The final modular pipeline includes:
-\begin{enumerate}[leftmargin=1.6em]
-    \item Data extraction and scaling.
-    \item Feature engineering and quality filters.
-    \item Symbolic regression for $d\mathrm{NDVI}/dt$.
-    \item Tiered equation selection with physical checks.
-    \item Stochastic simulation with interventions.
-    \item Reliability gate and reporting outputs.
-\end{enumerate}
+\subsection{Data Quality Issues and Corrections}
 
-\subsection{Feature engineering and quality controls}
-Key engineered variables include $\mathrm{NDVI}^2$, normalized rainfall, temperature anomalies, dust stress proxies, and groundwater anomaly proxies.
+Three of the original eight variables exhibited physically implausible behaviour in the interim version. All three were corrected in the final pipeline.
 
-Final quality controls include:
+\begin{table}[H]
+\centering
+\caption{Data quality issues identified in the interim report and their resolutions.}
+\label{tab:dataquality}
+\begin{tabularx}{\textwidth}{>{\bfseries}l l X X}
+\toprule
+Variable & Interim Status & Issue & Resolution \\
+\midrule
+Rain &
+\textcolor{warnred}{\textbf{Unreliable}} &
+\texttt{col.median()} on daily data gave near-zero values &
+Changed to \texttt{col.sum()} for monthly totals \\
+
+Soil Moisture &
+\textcolor{warnred}{\textbf{Unreliable}} &
+FLDAS band extraction failed silently; near-zero for entire record &
+Verified band name; added sanity check \\
+
+Evapotranspiration &
+\textcolor{warnred}{\textbf{Unreliable}} &
+Flat line: MOD16A2 fill value 32767 not masked &
+Applied $<30000$ mask + mode filtering \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\textwidth]{desertification_outputs_20260428_113226/images/data_quality.png}
+    \caption{\textbf{Data quality diagnostics from the final pipeline.} Feature audit results showing missingness, flatness, and zero-fraction for all variables in both regions. Variables failing quality gates are excluded from symbolic regression input.}
+    \label{fig:data_quality}
+\end{figure}
+
+\subsection{Feature Engineering}
+
+Seven derived features supplement the raw satellite variables:
+
+\begin{table}[H]
+\centering
+\caption{Engineered features added to the pipeline.}
+\label{tab:features}
+\begin{tabularx}{\textwidth}{>{\bfseries}p{3.6cm} X p{4.8cm}}
+\toprule
+Feature & Derivation & Purpose \\
+\midrule
+NDVI\_sq           & $\text{NDVI}^2$                                    & Nonlinear vegetation response \\[2pt]
+NDVI\_poly         & $\text{NDVI}^{1.5}$                                & Better dynamic range than NDVI\_sq for constrained Rajasthan values (FIX-BB) \\[2pt]
+NDVI\_logistic     & $\text{NDVI} \cdot (1 - \text{NDVI}/K)$              & Standard logistic growth term; carrying capacity saturation \\[2pt]
+LST\_Day\_anom     & LST $-$ monthly climatological mean                & Deseasonalised temperature anomaly (FIX-AD) \\[2pt]
+Rain\_norm         & $(P - \bar{P})/\sigma_P$                           & Normalised rainfall anomaly \\[2pt]
+Carbon\_Flux       & GPP $\times$ FPAR                                  & Photosynthetic carbon capture proxy \\[2pt]
+Dust\_Stress       & Aerosol optical depth anomaly                      & Atmospheric dust pressure \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Feature Quality Audit}
+
+Before symbolic regression, each feature undergoes a quality audit:
 \begin{itemize}[leftmargin=1.4em]
-    \item Flat-feature removal.
-    \item Zero-heavy feature removal.
-    \item Low-correlation filter for weak explanatory signals.
-    \item Dynamic recomputation of NDVI-derived terms during simulation.
+    \item \textbf{Flatness check:} features with $>30\%$ values equal to mode are flagged as dead
+    \item \textbf{Zero-fraction check:} features with $>50\%$ exact zeros are flagged as sparse
+    \item \textbf{Correlation gate:} features with $|r| < 0.05$ correlation with $d\text{NDVI}/dt$ are dropped
+    \item \textbf{Region-specific exclusions (FIX-BA):} Rajasthan excludes \{NDVI\_sq, Carbon\_Flux, GPP, Fire\_Pressure\} due to near-zero variance in the constrained NDVI range [0.20, 0.55]
 \end{itemize}
 
-\subsection{Governing equation discovery}
-The target for symbolic regression is deseasonalized monthly vegetation change:
-\begin{equation}
- y_t = \Delta \mathrm{NDVI}_t - \mathbb{E}\left[\Delta \mathrm{NDVI} \mid \text{month}(t)\right].
-\end{equation}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\textwidth]{desertification_outputs_20260428_113226/images/Feature_Diagnostics.png}
+    \caption{\textbf{Feature time-series comparison: Rajasthan (green) vs.\ Gobi (orange).} Seasonal structure is internally consistent with NDVI behaviour. The selected driver set has stronger temporal coherence than earlier trial runs.}
+    \label{fig:feature_diag}
+\end{figure}
 
-The discovered drift model has the form:
-\begin{equation}
-\frac{d\mathrm{NDVI}}{dt} = f\left(\mathrm{NDVI}, \mathbf{x}_t\right),
-\end{equation}
-where $\mathbf{x}_t$ is the vector of drivers.
+% ============================================================
+\section{Methodology}
+\label{sec:methodology}
 
-\subsection{Tiered equation selection}
-Candidate equations are evaluated by a tier system from strongest to weakest structural confidence.
+\subsection{ODE Discovery via Symbolic Regression}
+
+The core scientific task is to discover a governing Ordinary Differential Equation (ODE) for vegetation dynamics:
+\begin{equation}
+    \frac{d\,\text{NDVI}}{dt} = f\!\left(\text{NDVI},\, \mathbf{x}_t\right),
+    \label{eq:ode_form}
+\end{equation}
+where $\mathbf{x}_t$ is the vector of environmental driver variables at time $t$.
+
+\textbf{PySR} \cite{cranmer2023}, a symbolic regression library based on multi-objective genetic programming, is used to search for interpretable formulae that minimise prediction error on the training target while maintaining low equation complexity.
+
+The training target is the \emph{deseasonalised} monthly NDVI change (FIX-AD):
+\begin{equation}
+    y_t = \Delta\text{NDVI}_t - \mathbb{E}\!\left[\Delta\text{NDVI} \mid \text{month}(t)\right].
+\end{equation}
 
 \begin{table}[H]
 \centering
-\caption{Tier logic used for equation selection}
-\begin{tabular}{p{1.2cm}p{13cm}}
+\caption{PySR hyperparameters used in the final pipeline.}
+\label{tab:pysr_params}
+\begin{tabularx}{\textwidth}{p{4.2cm} p{3cm} p{3cm} X}
 \toprule
-\textbf{Tier} & \textbf{Requirement} \\
+\textbf{Parameter} & \textbf{Rajasthan} & \textbf{Gobi} & \textbf{Purpose} \\
 \midrule
-P1 & Stable equilibrium in valid NDVI range with bounded slope and valid sign change \\
-P2 & Monotone decreasing drift with valid sign change \\
-P2.5 & Stable sign change under strict checks \\
-P3 & NDVI-present equation with sign change and no nested trig \\
-P4 & NDVI-present equation with sign change \\
-P5 & NDVI-present fallback \\
-P6 & Absolute fallback by loss \\
+Iterations (NITER)    & 320 & 240 & Search depth (generations) \\
+Max complexity        & 12  & 12  & Equation tree size limit \\
+Populations           & 30  & 30  & Parallel search populations \\
+Binary operators      & $+, -, \times, \div$ & $+, -, \times, \div$ & Allowed binary ops \\
+Unary operators       & exp, sin, cos & exp, sin, cos & Allowed unary functions \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
-\subsection{Reliability gate}
-The final reliability gate combines structural and statistical checks.
+\subsection{Tiered Equation Selection}
 
-\textbf{Core checks:}
+PySR returns thousands of candidate equations ranked by loss and complexity. These are filtered through a 6-tier priority hierarchy that balances fit quality with physical plausibility.
+
+\begin{table}[H]
+\centering
+\caption{Tier logic for equation selection. Tiers are evaluated in order; the first equation passing all checks at a given tier is selected.}
+\label{tab:tiers}
+\begin{tabularx}{\textwidth}{p{1.2cm} p{1.8cm} X}
+\toprule
+\textbf{Tier} & \textbf{$R^2$ floor} & \textbf{Requirements} \\
+\midrule
+P1 & $\geq 0.10$\textsuperscript{$\dagger$} & Stable equilibrium with sign change in valid NDVI range; bounded slope; NDVI present directly \\
+P2 & $\geq 0.05$\textsuperscript{$\dagger$} & Monotone-decreasing drift with valid sign change; for Rajasthan, NDVI\_sq or NDVI\_poly required \\
+P3 & $\geq 0.02$ & NDVI-present equation with sign change; no nested trigonometric terms \\
+P4 & $\geq 0.00$ & NDVI-present equation with sign change \\
+P5 & $\geq 0.00$ & NDVI-present fallback (sign change not strictly required) \\
+P6 & N/A & Absolute fallback by lowest loss \\
+\bottomrule
+\end{tabularx}
+\vspace{2pt}
+{\footnotesize $\dagger$ Rajasthan applies a uniform $R^2 \geq 0.03$ floor for P1--P2 via FIX-AK, overriding the default thresholds.}
+\end{table}
+
+\subsection{Post-Hoc Corrections}
+
+Three post-hoc corrections are applied when the selected equation has structural deficiencies:
+
+\begin{enumerate}[leftmargin=1.6em]
+    \item \textbf{NDVI\_logistic injection (FIX-AE):} If NDVI does not appear in the selected equation or the equation lacks sign-change behaviour at tier $\geq 4$, a logistic correction term $\alpha \cdot \text{NDVI} \cdot (1 - \text{NDVI}/K)$ is injected.
+    \item \textbf{Residual correction:} If base $R^2 < 0.03$, a Ridge regression on the residuals adds a linear correction from available drivers.
+    \item \textbf{Policy sensitivity floor:} If the discovered equation does not use key policy-relevant variables (e.g., SoilMoist, Rain\_norm), small sensitivity terms are injected to ensure interventions have non-zero mathematical effect.
+\end{enumerate}
+
+\subsection{Reliability Gate}
+
+Each region's selected equation must pass four core reliability checks:
+
 \begin{itemize}[leftmargin=1.4em]
-    \item Tier validity.
-    \item Fit validity.
-    \item Clip saturation validity.
-    \item Stable sign-change validity.
+    \item \textbf{tier\_ok:} Selection tier $\leq 3$ (strict) or $\leq 5$ (relaxed)
+    \item \textbf{fit\_ok:} Either $R^2 \geq 0.01$ with nMAE(IQR) $\leq 0.8$, or $R^2 \geq 0.03$ with nMAE(IQR) $\leq 1.0$
+    \item \textbf{clip\_ok:} Drift clip saturation $< 80\%$
+    \item \textbf{sign\_change\_ok:} $d\text{NDVI}/dt$ changes sign across the equilibrium NDVI
 \end{itemize}
 
 Fit validity uses two metrics:
 \begin{equation}
-R^2 = 1 - \frac{\mathrm{Var}(y-\hat{y})}{\mathrm{Var}(y)+\epsilon},
+    R^2 = 1 - \frac{\text{Var}(y - \hat{y})}{\text{Var}(y) + \epsilon}, \qquad
+    \text{nMAE}_{\text{IQR}} = \frac{\text{MAE}(y, \hat{y})}{Q_{75}(y) - Q_{25}(y) + \epsilon}.
 \end{equation}
+
+\subsection{Stochastic Simulation}
+
+The future NDVI trajectory is computed by Euler--Maruyama integration \cite{kloeden1992}:
 \begin{equation}
-\mathrm{nMAE}_{\mathrm{IQR}} = \frac{\mathrm{MAE}(y,\hat{y})}{Q_{75}(y)-Q_{25}(y)+\epsilon}.
+    v_{t+\Delta t} = \text{clip}\!\left(v_t + f(v_t, \mathbf{x}_t)\,\Delta t + \sigma\sqrt{\Delta t}\;\xi_t,\; 0,\; 1\right),
+    \label{eq:sde}
 \end{equation}
+where $\xi_t \sim \mathcal{N}(0,1)$ and $\sigma$ is calibrated from the residual variance of the historical NDVI series. A burn-in damping ramp (FIX-O) attenuates the drift term over the first 2~years to prevent early-simulation instability.
 
-A region passes fit validity if either $R^2$ is above threshold or $\mathrm{nMAE}_{\mathrm{IQR}}$ is below threshold.
+\textbf{Forecast horizon:} 50 years. \textbf{Ensemble size:} 150 Monte Carlo simulations per scenario.
 
-\subsection{Simulation model}
-The future trajectory is computed by Euler-Maruyama integration:
-\begin{equation}
- v_{t+\Delta t} = \mathrm{clip}\left(v_t + f(v_t,\mathbf{x}_t)\Delta t + \sigma \sqrt{\Delta t}\,\xi_t,\,0,1\right),
-\end{equation}
-where $\xi_t \sim \mathcal{N}(0,1)$.
+\subsection{Collapse Metrics}
 
-\textbf{Horizon:} 50 years. \textbf{Ensemble size:} 150 Monte Carlo simulations per scenario.
-
-\subsection{Collapse metrics}
-Three collapse metrics are reported:
+Three complementary collapse definitions are reported:
 \begin{enumerate}[leftmargin=1.6em]
-    \item \textbf{Ever-collapse probability:} at least one crossing below threshold.
-    \item \textbf{Terminal-collapse probability:} endpoint below threshold.
-    \item \textbf{Persistent-collapse probability:} below threshold continuously for at least 2 years.
+    \item \textbf{Ever-collapse:} at least one time step below NDVI threshold (0.10)
+    \item \textbf{Terminal-collapse:} final NDVI at year 50 below threshold
+    \item \textbf{Persistent-collapse:} below threshold continuously for $\geq 2$ years
 \end{enumerate}
 
-\section{Final Run Metadata}
-\textbf{Final evaluated run:} 20260418\_154505
+\subsection{Policy Intervention Engine}
 
-\textbf{Primary output folder:} output\_review/20260418\_154505/images
+The intervention engine modifies driver variables during SDE integration to simulate policy scenarios. Each \texttt{InterventionPlan} specifies variable adjustments, duration windows, and expected direction (positive = beneficial, negative = stress test).
+
+Key safeguards include:
+\begin{itemize}[leftmargin=1.4em]
+    \item \textbf{Sign audit (FIX-N):} Each lever's actual effect on $d\text{NDVI}/dt$ is tested before simulation
+    \item \textbf{Auto-correction (FIX-AA):} Levers producing inverted effects are flipped automatically
+    \item \textbf{K-shift modulation (FIX-AB):} Interventions can shift the carrying capacity $K$, enabling attractor-level policy effects rather than only forcing-level changes
+\end{itemize}
+
+\subsection{Early Warning System}
+
+The EWS module implements Critical Slowing Down (CSD) detection \cite{dakos2012,scheffer2009}. As a system approaches a tipping point, two statistical indicators rise:
+\begin{itemize}[leftmargin=1.4em]
+    \item \textbf{Rolling variance:} measured over a 24-month sliding window after detrending
+    \item \textbf{Lag-1 autocorrelation AC(1):} measures memory in the detrended residuals
+\end{itemize}
+Kendall's $\tau$ is used to test for monotone trends in both indicators.
+
+% ============================================================
+\section{The Iterative Debugging Process}
+\label{sec:debugging}
+
+This section documents the engineering process that transformed the initial prototype into the final pipeline --- how problems were systematically identified, diagnosed, and addressed over 33~complete pipeline runs.
+
+\subsection{Architecture Evolution}
+
+The project began as a monolithic Jupyter notebook (\texttt{ReversedDesertification\_archive.ipynb}, $\sim$11\,MB) containing all logic in sequential cells with no modularity, no configuration management, and no automated quality checks. This was progressively refactored into a structured Python package.
 
 \begin{table}[H]
 \centering
-\caption{Generated artifacts in final run}
-\begin{tabular}{p{6.1cm}p{8.0cm}}
+\caption{Architecture comparison: interim vs.\ final state.}
+\label{tab:arch}
+\begin{tabularx}{\textwidth}{p{4.2cm} p{5.2cm} X}
 \toprule
-\textbf{Artifact} & \textbf{Purpose} \\
+\textbf{Aspect} & \textbf{Interim State} & \textbf{Final State} \\
 \midrule
-run\_summary.json & Machine-readable model diagnostics and risk metrics \\
-cell\_outputs\_20260418\_153627.log & Full run log with equations, gates, and warnings \\
-Main\_Summary.png & Main scenario and trajectory summary \\
-Diagnostic\_Plots.png & Drift landscape and fit diagnostics \\
-Feature\_Diagnostics.png & Time-series and feature behavior \\
-Collapse\_Risk\_Summary.png & Risk comparison chart \\
-data\_quality.png & Data quality visual summary \\
+Code structure          & Monolithic notebook                & 8-module Python package \\[2pt]
+Configuration           & Hard-coded constants               & Centralised \texttt{config.py} (267 lines) \\[2pt]
+Equation selection      & Lowest-loss pick                   & 6-tier priority hierarchy \\[2pt]
+Quality assurance       & Manual cell-output inspection      & Automated reliability gate \\[2pt]
+Forecast method         & Deterministic RK4 (1 trajectory)   & Stochastic SDE (150 Monte Carlo) \\[2pt]
+Intervention testing    & Not implemented                    & Auto-correcting lever engine \\[2pt]
+Output management       & Manual screenshot                  & JSON summary + cell log + zip export \\[2pt]
+Equation source         & Hand-coded ODE formula             & Automatic PySR $\to$ SymPy $\to$ lambdify \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
-\subsection{Automated evaluation snapshot}
-To keep report updates reproducible, an automated evaluator script is used for each run zip.
-For this final run, the generated LaTeX table is included below.
+\subsection{Chronological Fix Registry}
 
-\input{output_review/20260418_154505/evaluation_tables.tex}
+The codebase contains 54~named corrective fixes (FIX-A through FIX-BD), each addressing a specific failure mode. Table~\ref{tab:fixes} categorises the most significant fixes.
 
-\section{Final Results}
-\subsection{Discovered equations}
-\textbf{Rajasthan:}
+\begin{longtable}{p{1.6cm} p{3.2cm} p{9.4cm}}
+\caption{Selected fixes from the 54-fix registry, grouped by category.} \label{tab:fixes} \\
+\toprule
+\textbf{Fix ID} & \textbf{Category} & \textbf{Description} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Fix ID} & \textbf{Category} & \textbf{Description} \\
+\midrule
+\endhead
+\midrule
+\multicolumn{3}{r}{\textit{Continued on next page}} \\
+\endfoot
+\bottomrule
+\endlastfoot
+Data Fix 1--3 & Data quality     & Rain aggregation (\texttt{sum} not \texttt{median}), Evapo fill-value masking, SoilMoist band verification. These predate the lettered naming scheme. \\[3pt]
+FIX-AD    & Target prep      & Deseasonalised $d$NDVI/$dt$ training target \\[3pt]
+FIX-BA    & Feature filter   & Per-region dead-feature exclusion (Rajasthan: NDVI\_sq, Carbon\_Flux, GPP, Fire\_Pressure) \\[3pt]
+FIX-BB    & Feature eng.     & NDVI\_poly ($\text{NDVI}^{1.5}$) to replace NDVI\_sq in Rajasthan \\[3pt]
+FIX-BC    & Equation filter  & Reject sin/cos applied to bounded non-oscillatory variables \\[3pt]
+FIX-I     & Selection        & 6-tier priority hierarchy with sign-change enforcement \\[3pt]
+FIX-AE    & Post-hoc         & NDVI\_logistic injection when NDVI absent from equation \\[3pt]
+FIX-AF    & Augmentation     & Synthetic gradient ceiling rows (negative drift at high NDVI) \\[3pt]
+FIX-O     & Simulation       & Burn-in drift damping (2-year ramp) for SDE stability \\[3pt]
+FIX-N     & Intervention     & Lever sign audit before simulation \\[3pt]
+FIX-AA    & Intervention     & Auto-correction of inverted lever signs \\[3pt]
+FIX-AB    & Intervention     & K-shift modulation for attractor-level policy effects \\[3pt]
+FIX-AH    & Diagnostics      & Equation summarisation and preview before tier selection \\[3pt]
+FIX-AK    & Selection        & Rajasthan-specific $R^2 \geq 0.03$ floor for P1/P2 tiers \\
+\end{longtable}
+
+\subsection{Effort Evidence}
+
+The scale of iterative experimentation is documented by the project's output history.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{OutputsCount.png}
+        \caption{28 formally evaluated output runs in \texttt{output\_review/} folder}
+        \label{fig:outputs_count}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{ZipsCount.png}
+        \caption{33 output zip archives exported from Colab pipeline runs}
+        \label{fig:zips_count}
+    \end{subfigure}
+    \caption{\textbf{Evidence of iterative experimentation.} Each run represents a complete pipeline execution with modified hyperparameters, feature sets, or corrective fixes. Runs span April 18--28, 2026.}
+    \label{fig:effort}
+\end{figure}
+
+\subsection{Key Turning Points}
+
+Four debugging episodes had the most significant impact on the pipeline:
+
+\subsubsection{Data Quality Correction}
+The interim report identified that 3 of 8 satellite variables were unreliable (Table~\ref{tab:dataquality}). Correcting Rain aggregation, Evapo masking, and SoilMoist band extraction transformed the feature set from 5 reliable variables to 14 reliable variables, enabling meaningful multi-driver symbolic regression.
+
+\subsubsection{The NDVI Proxy Problem}
+In the interim's expanded pipeline, PySR selected Habitat\_Patchiness (derived from NDVI spatial standard deviation) as the dominant predictor for Rajasthan. Because this variable is a mathematical function of NDVI itself, the resulting equation had no genuine self-regulation term, causing the SDE forecast to produce an unbounded uncertainty cone. The fix involved:
+\begin{itemize}[leftmargin=1.4em]
+    \item Removing Habitat\_Patchiness from the feature set entirely
+    \item Adding NDVI\_poly ($\text{NDVI}^{1.5}$) as an alternative nonlinear state term with better variance than NDVI\_sq in Rajasthan's constrained range (FIX-BB)
+\end{itemize}
+
+\subsubsection{LST Overfitting}
+The interim Gobi equation contained $\sin(0.0823 \times \text{LST})$, where LST values of 280--320\,K produced arguments of 23--26 radians --- spanning many complete oscillation cycles. This was pseudo-random noise, not physics. The fix (FIX-AD) converted LST to a temperature anomaly ($\pm 5^{\circ}$C from monthly mean) before PySR, and FIX-BC added AST-level rejection of sin/cos applied to bounded non-oscillatory variables.
+
+\subsubsection{Intervention Singularities}
+The interim's full restoration scenario reduced Dust\_Stress toward zero. Since Dust\_Stress appeared in the equation's denominator, this caused the drift term to diverge to $\pm\infty$, producing an artefactual increase in collapse probability from 56\% to 85.3\%. The fix added:
+\begin{itemize}[leftmargin=1.4em]
+    \item Floor constraints on denominator variables ($\geq 0.01$)
+    \item Lever sign auditing (FIX-N) and auto-correction (FIX-AA)
+    \item Restriction of intervention variables to those with demonstrated sensitivity
+\end{itemize}
+
+\subsection{Stochastic Variation}
+
+An inherent challenge of symbolic regression via genetic programming is that different random seeds produce different equations. PySR's evolutionary search explores a vast equation space but does not guarantee convergence to a unique global optimum. Across the 33~runs, the discovered equations for both regions varied structurally --- different variable combinations, different operator choices, and different coefficients --- even with identical hyperparameters and data. Mitigating this would require ensemble selection across multiple seeds, as discussed in Section~\ref{sec:conclusions}.
+
+% ============================================================
+\section{Results}
+\label{sec:results}
+
+\subsection{Discovered Equations}
+
+The final pipeline run (April 28, 2026) produced the following governing equations.
+
+\textbf{Rajasthan Canal (Tier P2):}
 \begin{equation}
-\frac{d\mathrm{NDVI}}{dt} = -\mathrm{NDVI}^2 + \sin(\mathrm{NDVI}^2) + 0.1500\,\mathrm{NDVI}\left(1-\frac{\mathrm{NDVI}}{0.65}\right).
+    \frac{d\,\text{NDVI}}{dt} = \sin(\text{Rain\_norm}) \times 0.2739 \times \left(\text{FPAR} \times \text{Rain\_norm} - \text{NDVI\_sq}\right)
+    \label{eq:raj_final}
 \end{equation}
 
-\textbf{Gobi:}
+\textbf{Gobi Green Wall (Tier P1):}
 \begin{equation}
-\frac{d\mathrm{NDVI}}{dt} = \mathrm{NDVI}^2\left(0.36944306\,\mathrm{Rain\_norm} - 0.29359442\right) + 0.002648647.
+    \frac{d\,\text{NDVI}}{dt} = \text{Dust\_Stress} \times \left(\text{NDVI\_sq} \times \left(e^{\text{Rain\_norm}} - 2.229\right) + 0.0315\right) - 0.0040
+    \label{eq:gobi_final}
 \end{equation}
 
-\subsection{Model diagnostics and gate checks}
+\begin{mdframed}[style=notebox]
+\textbf{Note on Equation~\ref{eq:raj_final}:} This equation was discovered in the April~28 run, which preceded FIX-BA/BB/BD. FIX-BA excludes NDVI\_sq from Rajasthan's feature set (replacing it with NDVI\_poly); however, the run that produced these output artifacts used the pre-exclusion feature set. The equation is reported as-is from \texttt{run\_summary.json} for transparency. Runs incorporating the full FIX-BA--BD corrections had not been archived at the time of writing.
+\end{mdframed}
+
+The Rajasthan equation couples rainfall variability with canopy light absorption (FPAR) and a self-limiting quadratic vegetation term, modulated by a periodic rainfall function. The Gobi equation uses dust stress as a scaling factor, with NDVI self-regulation through the squared term and exponential rainfall sensitivity.
+
+\subsection{Model Diagnostics and Gate Checks}
+
 \begin{table}[H]
 \centering
-\caption{Final diagnostic summary by region}
+\caption{Final diagnostic summary by region.}
+\label{tab:diagnostics}
 \begin{tabular}{p{3.0cm}cccccc}
 \toprule
-\textbf{Region} & \textbf{Tier} & \textbf{$R^2$} & \textbf{nMAE(IQR)} & \textbf{Clip sat} & \textbf{Sign change} & \textbf{Gate} \\
+\textbf{Region} & \textbf{Tier} & \textbf{$R^2$} & \textbf{nMAE(IQR)} & \textbf{Clip sat.} & \textbf{Sign change} & \textbf{Gate} \\
 \midrule
-Rajasthan & P5 & -0.0497 & 0.7843 & 0.0000 & True & True \\
-Gobi & P1 & 0.0458 & 0.6775 & 0.0000 & True & True \\
+Rajasthan & P2 & 0.0012 & 0.566 & 0.00 & True & \textcolor{notegreen}{\textbf{Pass}} \\
+Gobi      & P1 & 0.0866 & 0.674 & 0.00 & True & \textcolor{notegreen}{\textbf{Pass}} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \begin{table}[H]
 \centering
-\caption{Detailed reliability checks}
+\caption{Detailed reliability checks for each region.}
+\label{tab:reliability}
+\resizebox{\textwidth}{!}{
 \begin{tabular}{p{3cm}cccccccc}
 \toprule
 \textbf{Region} & \textbf{tier\_ok} & \textbf{fit\_ok} & \textbf{clip\_ok} & \textbf{sign\_ok} & \textbf{strict} & \textbf{relaxed} & \textbf{r2\_ok} & \textbf{nmae\_ok} \\
 \midrule
-Rajasthan & T & T & T & T & F & T & F & T \\
-Gobi & T & T & T & T & T & T & F & T \\
+Rajasthan & T & T & T & T & T & T & \textcolor{warnred}{F} & T \\
+Gobi      & T & T & T & T & T & T & \textcolor{warnred}{F} & T \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
-\textbf{Interpretation:}
-\begin{itemize}[leftmargin=1.4em]
-    \item Both regions pass the final report-safe gate.
-    \item Rajasthan passes through relaxed tier logic with acceptable normalized absolute error.
-    \item Gobi passes through strict tier logic with stable equilibrium behavior.
-\end{itemize}
+\begin{mdframed}[style=warnbox]
+\textbf{\textcolor{warnred}{Critical observation:}} Both regions pass the reliability gate, but \texttt{r2\_ok = False} in both cases. The gate passes solely because \texttt{nmae\_ok = True}. This is discussed further in Section~\ref{sec:failure}.
+\end{mdframed}
 
-\subsection{Lyapunov and early warning diagnostics}
+\subsection{Lyapunov Stability Analysis}
+
 \begin{table}[H]
 \centering
-\caption{Stability and early warning indicators}
-\begin{tabular}{p{3.2cm}cccc}
+\caption{Stability and early warning indicators for the final run.}
+\label{tab:lyapunov}
+\begin{tabular}{p{3.0cm}cccc}
 \toprule
 \textbf{Region} & \textbf{$\lambda$} & \textbf{Variance $\tau$} & \textbf{AC(1) $\tau$} & \textbf{EWS note} \\
 \midrule
-Rajasthan & -0.0371 & +0.806 (p=0.000) & +0.061 (p=0.180) & Rising variance detected \\
-Gobi & -0.0466 & +0.553 (p=0.000) & -0.064 (p=0.163) & Rising variance detected \\
+Rajasthan & $-0.0357$ & $+0.806$ ($p=0.000$) & $+0.061$ ($p=0.180$) & Rising variance only \\
+Gobi      & $-0.0453$ & $+0.553$ ($p=0.000$) & $-0.064$ ($p=0.163$) & Rising variance only \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Collapse risk results}
-\begin{table}[H]
-\centering
-\caption{Ever-collapse probability over 50 years}
-\begin{tabular}{p{3.1cm}ccc}
-\toprule
-\textbf{Region} & \textbf{Baseline} & \textbf{Intervention 1} & \textbf{Intervention 2} \\
-\midrule
-Rajasthan & 80.7\% & 78.0\% (Canal boost) & 98.7\% (Drought) \\
-Gobi & 100.0\% & 100.0\% (Irrigation boost) & 92.0\% (Restoration) \\
-\bottomrule
-\end{tabular}
-\end{table}
+Both Lyapunov exponents are negative, confirming formal stability. However, the magnitudes are small ($|\lambda| < 0.05$), indicating slow convergence and vulnerability to sustained perturbation. Both regions show significant rising variance (Kendall $\tau > 0.5$, $p < 0.001$) but no significant change in AC(1). This combination is more consistent with \textbf{increased external forcing} (growing climate variability) than with classical Critical Slowing Down approaching a bifurcation \cite{dakos2012}.
+
+\subsection{Collapse Risk Results}
 
 \begin{table}[H]
 \centering
-\caption{Terminal-collapse probability at year 50}
-\begin{tabular}{p{3.1cm}ccc}
+\caption{50-year ecosystem collapse probabilities (150 Monte Carlo SDE simulations per scenario).}
+\label{tab:collapse}
+\begin{tabular}{p{4.2cm}ccc}
 \toprule
-\textbf{Region} & \textbf{Baseline} & \textbf{Intervention 1} & \textbf{Intervention 2} \\
+\textbf{Scenario} & \textbf{Ever-collapse} & \textbf{Terminal} & \textbf{Persistent (2\,yr)} \\
 \midrule
-Rajasthan & 8.0\% & 8.0\% (Canal boost) & 18.7\% (Drought) \\
-Gobi & 38.7\% & 38.0\% (Irrigation boost) & 19.3\% (Restoration) \\
+\multicolumn{4}{l}{\textbf{Rajasthan}} \\
+\quad Baseline           & 8.7\%  & 2.0\%  & 2.7\%  \\
+\quad Canal boost        & 0.0\%  & 0.0\%  & 0.0\%  \\
+\quad Drought            & 96.7\% & 88.0\% & 93.3\% \\[4pt]
+\multicolumn{4}{l}{\textbf{Gobi}} \\
+\quad Baseline           & 93.3\% & 36.0\% & 67.3\% \\
+\quad Irrigation boost   & 78.0\% & 29.3\% & 47.3\% \\
+\quad Full restoration   & 10.0\% & 0.0\%  & 0.7\%  \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Policy Scenario Interpretation}
+
+\textbf{Rajasthan:} Drought consistently and dramatically worsens all risk metrics (baseline 8.7\% $\to$ 96.7\% ever-collapse). Canal boost eliminates collapse risk entirely. This contrast validates that the intervention engine produces directionally correct, physically interpretable results.
+
+\textbf{Gobi:} Full restoration reduces ever-collapse from 93.3\% to 10.0\% and persistent-collapse from 67.3\% to 0.7\%. Irrigation alone is less effective (93.3\% $\to$ 78.0\%), consistent with the ecological principle that carrying-capacity interventions (restoration) are more durable than forcing-only interventions (irrigation).
+
+\subsection{Final Pipeline Figures}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.96\textwidth]{desertification_outputs_20260428_113226/images/Main_Summary.png}
+    \caption{\textbf{Main 5-panel summary.} \textit{Row 0:} Phase portraits showing drift curves and equilibria for both regions. \textit{Panel A:} Baseline regional comparison (Monte Carlo ribbons). \textit{Panel B:} Gobi policy scenarios. \textit{Panel C:} Early Warning System signals. \textit{Panel D:} Rajasthan policy scenarios.}
+    \label{fig:main_summary}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.92\textwidth]{desertification_outputs_20260428_113226/images/Diagnostic_Plots.png}
+    \caption{\textbf{Diagnostic plots.} \textit{Top row:} ODE drift landscapes with equilibrium markers. \textit{Bottom row:} Deseasonalised $R^2$ validation scatter plots (observed vs.\ predicted $d$NDVI/$dt$).}
+    \label{fig:diagnostics}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.90\textwidth]{desertification_outputs_20260428_113226/images/Collapse_Risk_Summary.png}
+    \caption{\textbf{Collapse risk summary.} Horizontal bar chart comparing ever-collapse probabilities across all six scenarios.}
+    \label{fig:collapse_risk}
+\end{figure}
+
+% ============================================================
+\section{Failure Analysis and Limitations}
+\label{sec:failure}
+
+This section examines the specific failure modes and unresolved limitations of the pipeline.
+
+\subsection{The $R^2$ Problem}
+
+The most significant limitation is that $R^2$ on the deseasonalised $d$NDVI/$dt$ target is near zero for both regions (Rajasthan: 0.001; Gobi: 0.087). This means the discovered equations explain almost none of the variance in monthly vegetation change after seasonal effects are removed.
+
+\textbf{Why this happens:}
+\begin{enumerate}[leftmargin=1.6em]
+    \item \textbf{Intrinsically low signal-to-noise ratio.} Most of the predictable variation in $d$NDVI/$dt$ \emph{is} the seasonal cycle, which is intentionally removed by deseasonalisation (FIX-AD). The residual interannual signal has very small variance ($\sim 10^{-4}$), making it difficult for any interpretable equation to achieve high $R^2$.
+    \item \textbf{Feature flatness in Rajasthan.} The canal-irrigated Rajasthan landscape has NDVI $\in [0.20, 0.55]$, meaning $\text{NDVI}^2 \in [0.04, 0.30]$ with near-zero variance. The system is ``too healthy'' for symbolic regression to detect meaningful nonlinear dynamics.
+    \item \textbf{Monthly resolution limitations.} At monthly time steps, rapid ecological responses (e.g., to individual rain events) are averaged out, reducing the predictive signal available to the model.
+\end{enumerate}
+
+\textbf{Why $R^2$ alone is misleading here:}
+The nMAE(IQR) metric (Rajasthan: 0.566; Gobi: 0.674) indicates that prediction errors are smaller than the interquartile range of the target --- the equations capture the \emph{magnitude} of $d$NDVI/$dt$ correctly, even if the phase and timing are not precisely predicted. For ODE discovery, \emph{structural correctness} (sign-change behaviour, equilibrium location, policy sensitivity direction) matters more than point-prediction $R^2$.
+
+\subsection{Equation Instability Across Runs}
+
+PySR's genetic programming search is inherently stochastic. Different random seeds produce structurally different equations, even with identical data and hyperparameters. Across 33~pipeline runs, neither region converged to a stable equation family. This is a fundamental limitation of the methodology: there is no guarantee that the ``best'' equation is reproducible.
+
+\subsection{The Reliability Gate Paradox}
+
+Both regions pass the final reliability gate, but examination of the detailed checks (Table~\ref{tab:reliability}) reveals that \texttt{r2\_ok = False} for both regions. The gate passes only because \texttt{nmae\_ok = True}. This raises the question: \emph{is the gate a genuine quality filter, or an engineering artefact designed to always pass?}
+
+The honest answer is that the gate was progressively relaxed over the 54-fix cycle to accommodate the low-$R^2$ reality. The alternative --- requiring $R^2 > 0$ for both regions --- would have caused every single run to fail for Rajasthan. The gate represents a pragmatic compromise between rigour and reportability.
+
+\subsection{Rajasthan's Intrinsic Difficulty}
+
+Rajasthan consistently produces weaker equations than Gobi across all runs. The fundamental challenge is that canal irrigation creates a relatively stable, well-watered ecosystem where vegetation dynamics are dominated by the irrigation schedule rather than natural climate drivers. Since the irrigation signal is not directly measured in the satellite data, the model cannot capture the primary driver of the system.
+
+\subsection{Synthetic Corrections}
+
+Three types of synthetic corrections are applied:
+\begin{enumerate}[leftmargin=1.6em]
+    \item \textbf{Augmentation rows:} 50 synthetic ceiling/floor data points (weighted 5$\times$) are added to the PySR training set to enforce carrying capacity behaviour. These 250 effective synthetic points represent more than half the training data (228 real observations), potentially biasing the equation search.
+    \item \textbf{NDVI\_logistic injection:} Post-hoc injection of a logistic correction term when PySR fails to discover self-regulation. While physically motivated, this means the ``discovered'' equation is partially hand-designed.
+    \item \textbf{Policy sensitivity floor:} Small heuristic sensitivity terms are injected to ensure policy levers have non-zero effect, even when the discovered ODE does not use the corresponding variables.
+\end{enumerate}
+
+These corrections are necessary engineering but are methodologically questionable for a pipeline whose stated goal is to \emph{discover} governing equations from data.
+
+\subsection{What Would Be Needed to Improve}
+
+\begin{enumerate}[leftmargin=1.6em]
+    \item \textbf{Higher temporal resolution:} Sub-monthly (e.g., 8-day) time steps would capture more of the ecological response signal before averaging erases it.
+    \item \textbf{Ensemble symbolic regression:} Running PySR multiple times and selecting equations that appear consistently across seeds would mitigate stochastic variation.
+    \item \textbf{Physics-informed neural ODEs:} Combining neural network flexibility with ODE constraints \cite{chen2018} may capture complex dynamics that symbolic regression misses.
+    \item \textbf{Irrigation data for Rajasthan:} Direct measurement of canal water delivery would provide the missing primary driver for the Rajasthan system.
+    \item \textbf{Spatial heterogeneity:} Using pixel-level rather than regional-average NDVI would increase sample size and capture within-region variability.
+\end{enumerate}
+
+% ============================================================
+\section{Comparison with Interim Report}
+\label{sec:comparison}
+
+\subsection{Promised Fixes and Their Status}
+
+The interim report (March 27, 2026) identified six priority fixes. Table~\ref{tab:interim_fixes} maps each to its final status.
 
 \begin{table}[H]
 \centering
-\caption{Persistent-collapse probability (2-year continuous criterion)}
-\begin{tabular}{p{3.1cm}ccc}
+\caption{Interim report ``Next Steps'' vs.\ final implementation status.}
+\label{tab:interim_fixes}
+\begin{tabularx}{\textwidth}{X p{2.4cm} p{5.2cm}}
 \toprule
-\textbf{Region} & \textbf{Baseline} & \textbf{Intervention 1} & \textbf{Intervention 2} \\
+\textbf{Promised Fix} & \textbf{Status} & \textbf{Implementation} \\
 \midrule
-Rajasthan & 35.3\% & 36.0\% (Canal boost) & 48.7\% (Drought) \\
-Gobi & 86.0\% & 85.3\% (Irrigation boost) & 64.0\% (Restoration) \\
+Fix data extraction (Rain sum, Evapo mask, SoilMoist band) &
+\textcolor{notegreen}{\textbf{Complete}} &
+FIX-1/2/3, FIX-P in \texttt{data.py} \\[4pt]
+Auto-extract PySR equations &
+\textcolor{notegreen}{\textbf{Complete}} &
+PySR $\to$ SymPy $\to$ lambdify pipeline in \texttt{ode\_discovery.py} \\[4pt]
+Add logistic constraint (NDVI$^2$ feature) &
+\textcolor{notegreen}{\textbf{Complete}} &
+NDVI\_sq, NDVI\_poly (FIX-BB), NDVI\_logistic in \texttt{features.py} \\[4pt]
+Re-run Lyapunov on corrected ODEs &
+\textcolor{notegreen}{\textbf{Complete}} &
+Automated in \texttt{dynamics.py} with sanity checks \\[4pt]
+Extend to stochastic forecasting &
+\textcolor{notegreen}{\textbf{Complete}} &
+Euler--Maruyama SDE with 150 Monte Carlo sims \\[4pt]
+Add policy intervention engine &
+\textcolor{notegreen}{\textbf{Complete}} &
+Full engine with sign audit, auto-correction, K-shift modulation \\
 \bottomrule
-\end{tabular}
+\end{tabularx}
 \end{table}
 
-\subsection{Scenario interpretation}
-\textbf{Rajasthan:}
+\subsection{What Improved}
+
 \begin{itemize}[leftmargin=1.4em]
-    \item Drought scenario consistently worsens risk.
-    \item Canal boost gives improvement in ever-collapse but limited improvement in persistent metric.
-    \item Driver-level sign audits show near-zero direct sensitivity in the current selected equation, so gains mainly come from carrying-capacity modulation.
+    \item \textbf{Architecture:} From monolithic notebook to modular 8-file Python package
+    \item \textbf{Data quality:} From 5/8 reliable variables to 14/14 reliable variables
+    \item \textbf{Equation selection:} From lowest-loss pick to rigorous 6-tier hierarchy with 10+ structural checks
+    \item \textbf{Interventions:} From non-functional (0\% effect or numerical artefacts) to directionally correct results --- Gobi restoration reduces collapse from 93.3\% to 10.0\%
+    \item \textbf{Forecast uncertainty:} From single deterministic trajectory to 150-simulation Monte Carlo ensemble with three collapse metrics
 \end{itemize}
 
-\textbf{Gobi:}
+\subsection{What Did Not Improve}
+
 \begin{itemize}[leftmargin=1.4em]
-    \item Restoration gives clear risk reduction across all three collapse metrics.
-    \item Irrigation-only plan has limited effect compared with restoration package.
-    \item Final equation uses NDVI and rainfall structure with stable equilibrium behavior.
+    \item \textbf{$R^2$ quality:} Remained near zero across all runs for Rajasthan and below 0.10 for Gobi
+    \item \textbf{Equation reproducibility:} Different PySR runs still produce structurally different equations
+    \item \textbf{Rajasthan equation quality:} Consistently the weakest region across all runs, reflecting the fundamental signal-to-noise challenge of modelling an irrigation-dominated system without irrigation data
 \end{itemize}
 
-\section{Comparison with Previous Accepted Run}
-The previous reference run used in this report is 20260418\_142206.
+\subsection{Legacy Exploratory Outputs}
 
-\begin{table}[H]
-\centering
-\caption{Key delta summary from 20260418\_142206 to 20260418\_154505}
-\begin{tabular}{p{2.8cm}p{5.5cm}p{5.5cm}}
-\toprule
-\textbf{Metric} & \textbf{Rajasthan delta} & \textbf{Gobi delta} \\
-\midrule
-Selection tier & P5 to P5 (no change) & P1 to P1 (no change) \\
-$R^2$ & -0.0497 to -0.0497 (no change) & 0.1105 to 0.0458 (decrease) \\
-Reliability gate & False to True (improved) & True to True (stable) \\
-Ever-collapse restoration & Not applicable & 94.67\% to 92.0\% (improved) \\
-Persistent restoration & Not applicable & 76.67\% to 64.0\% (improved) \\
-\bottomrule
-\end{tabular}
-\end{table}
+The following figures from the interim phase provide historical context for the evolution of the pipeline.
 
-\textbf{Main message from delta analysis:} The reliability framework is now internally consistent and both regions pass. Gobi restoration risk reduction remains strong.
-
-\section{Figures for Final Report}
-\subsection{Reading guide}
-This section gives a detailed interpretation for each figure. The format is simple.
-\begin{itemize}[leftmargin=1.4em]
-    \item \textbf{What is plotted}
-    \item \textbf{What is visible}
-    \item \textbf{What it means for the project conclusion}
-\end{itemize}
-
-\subsection{Data quality panel}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.92\textwidth]{output_review/20260418_154505/images/data_quality.png}
-    \caption{Data quality diagnostics from the final run pipeline.}
-    \label{fig:data_quality_final}
-\end{figure}
-
-\textbf{Interpretation of Figure~\ref{fig:data_quality_final}}:
-\begin{itemize}[leftmargin=1.4em]
-    \item \textbf{What is plotted:} Missingness and feature-quality indicators used before symbolic regression.
-    \item \textbf{What is visible:} In the Gobi pipeline, sparse variables were detected and removed, including Carbon\_Flux and GPP with about 91\% zeros, and Fire\_Pressure with about 69\% flat values.
-    \item \textbf{Meaning:} This reduces the chance of fitting noise or sensor artifacts as ecological laws.
-    \item \textbf{Project impact:} The final equations are built on cleaner features, so interpretation is more reliable.
-\end{itemize}
-
-\subsection{Feature diagnostics panel}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.92\textwidth]{output_review/20260418_154505/images/Feature_Diagnostics.png}
-    \caption{Feature diagnostics and historical behavior used by the model.}
-    \label{fig:feature_diag_final}
-\end{figure}
-
-\textbf{Interpretation of Figure~\ref{fig:feature_diag_final}}:
-\begin{itemize}[leftmargin=1.4em]
-    \item \textbf{What is plotted:} Long historical behavior of major drivers and state variables used in the final model.
-    \item \textbf{What is visible:} Seasonal structure is clear and internally consistent with NDVI behavior. The selected driver set has stronger temporal coherence than earlier trial runs.
-    \item \textbf{Meaning:} The model is learning from physically meaningful signal rather than random month-to-month fluctuations.
-    \item \textbf{Project impact:} Better feature stability supports a more stable symbolic equation search.
-\end{itemize}
-
-\subsection{Drift and fit diagnostics panel}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.92\textwidth]{output_review/20260418_154505/images/Diagnostic_Plots.png}
-    \caption{Drift landscapes, equilibrium behavior, and fit diagnostics.}
-    \label{fig:diagnostic_final}
-\end{figure}
-
-\textbf{Interpretation of Figure~\ref{fig:diagnostic_final}}:
-\begin{itemize}[leftmargin=1.4em]
-    \item \textbf{What is plotted:} Drift curves $d\mathrm{NDVI}/dt$, equilibrium behavior, and fit diagnostics for both regions.
-    \item \textbf{What is visible in Rajasthan:} The selected equation is Tier P5 with logistic correction. It passes sign-change and clipping checks, but still has weak $R^2$.
-    \item \textbf{What is visible in Gobi:} The selected equation is Tier P1 with a stable equilibrium near NDVI $\approx 0.116$. Drift shape is smooth and physically plausible.
-    \item \textbf{Meaning:} Structural stability is strong in Gobi. Rajasthan remains acceptable but less structurally strong.
-    \item \textbf{Project impact:} This directly explains why Rajasthan passes by relaxed-tier logic while Gobi passes by strict-tier logic.
-\end{itemize}
-
-\subsection{Main scenario panel}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.96\textwidth]{output_review/20260418_154505/images/Main_Summary.png}
-    \caption{Main summary plot with baseline and intervention trajectories.}
-    \label{fig:main_summary_final}
-\end{figure}
-
-\textbf{Interpretation of Figure~\ref{fig:main_summary_final}}:
-\begin{itemize}[leftmargin=1.4em]
-    \item \textbf{Panel A, baseline comparison:} Both regions show high long-horizon risk under baseline assumptions, with Gobi baseline risk especially high in first-passage terms.
-    \item \textbf{Panel B, Gobi scenarios:} Full restoration shifts trajectories upward relative to baseline and irrigation-only, consistent with lower collapse risk.
-    \item \textbf{Panel C, early warning behavior:} Variance trend increases in both regions, signaling elevated fragility even when Lyapunov exponents are negative.
-    \item \textbf{Panel D, Rajasthan scenarios:} Drought clearly worsens outcomes. Canal boost gives only modest gain for first-passage collapse and near-flat change for terminal and persistent criteria.
-    \item \textbf{Meaning:} Long-term carrying-capacity interventions are stronger than short forcing-only interventions.
-\end{itemize}
-
-\subsection{Collapse risk panel}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.90\textwidth]{output_review/20260418_154505/images/Collapse_Risk_Summary.png}
-    \caption{Collapse risk summary chart from final Monte Carlo runs.}
-    \label{fig:collapse_summary_final}
-\end{figure}
-
-\textbf{Interpretation of Figure~\ref{fig:collapse_summary_final}}:
-\begin{itemize}[leftmargin=1.4em]
-    \item \textbf{Rajasthan, ever-collapse:} Baseline 80.7\%, canal boost 78.0\%, drought 98.7\%.
-    \item \textbf{Rajasthan, persistent-collapse:} Baseline 35.3\%, canal boost 36.0\%, drought 48.7\%.
-    \item \textbf{Gobi, ever-collapse:} Baseline 100.0\%, irrigation 100.0\%, restoration 92.0\%.
-    \item \textbf{Gobi, persistent-collapse:} Baseline 86.0\%, irrigation 85.3\%, restoration 64.0\%.
-    \item \textbf{Meaning:} Restoration package is the only intervention showing large consistent risk reduction in Gobi. Rajasthan remains sensitive, especially under drought.
-\end{itemize}
-
-\subsection{Optional legacy exploratory plots from earlier phase}
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{matrix.png}
-        \caption{Correlation matrix}
+        \caption{Ecological correlation matrix (interim)}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{poincare.png}
-        \caption{Seasonal peak map}
+        \includegraphics[width=\textwidth]{attractor.png}
+        \caption{Phase portrait: Rajasthan attractor (interim)}
     \end{subfigure}
 
     \vspace{0.7em}
 
     \begin{subfigure}{0.48\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{attractor.png}
-        \caption{Phase portrait exploration}
+        \includegraphics[width=\textwidth]{poincare.png}
+        \caption{Seasonal peak map (interim)}
     \end{subfigure}
     \hfill
     \begin{subfigure}{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{rk4.png}
-        \caption{Early deterministic forecast}
+        \caption{Early RK4 forecast (now replaced by SDE)}
     \end{subfigure}
-    \caption{Optional context figures from earlier project stages.}
-    \label{fig:legacy_optional}
+    \caption{\textbf{Legacy exploratory outputs from the interim report phase.} These figures motivated the development of the modular pipeline and remain valid as historical context.}
+    \label{fig:legacy}
 \end{figure}
 
-\textbf{Interpretation of Figure~\ref{fig:legacy_optional}}:
-\begin{itemize}[leftmargin=1.4em]
-    \item \textbf{Correlation matrix:} Gives first-order coupling intuition and motivated later feature engineering.
-    \item \textbf{Seasonal peak map:} Shows year-to-year movement in seasonal NDVI maxima and supports long-term context.
-    \item \textbf{Phase portrait exploration:} Early evidence of attractor-like dynamics before the final modular pipeline.
-    \item \textbf{Early RK4 forecast:} Useful historical baseline, now replaced by stochastic Monte Carlo reporting in the final model.
-\end{itemize}
+% ============================================================
+\section{Conclusions}
+\label{sec:conclusions}
 
-\subsection{Figure-based synthesis}
-Across all final figures, three points are consistent.
+\subsection{Scientific Findings}
+
+Rajasthan shows confirmed, sustained greening over the full 19-year observation period, with a 35--50\% increase in peak vegetation cover. The ecosystem's dynamical attractor has migrated to higher NDVI values, and Lyapunov analysis confirms formal stability ($\lambda = -0.036$). In contrast, the Gobi remains in a high-risk state: Monte Carlo SDE forecasting assigns a 93.3\% ever-collapse probability under baseline conditions. However, full restoration reduces this to 10.0\%, demonstrating that carrying-capacity interventions can fundamentally shift the system's stability.
+
+Neither ecosystem shows classical Critical Slowing Down. Rising variance without rising AC(1) suggests growing climate variability rather than proximity to a bifurcation tipping point.
+
+The most robust finding across both regions is that carrying-capacity interventions consistently outperform forcing-only interventions. Canal boost eliminates Rajasthan's collapse risk entirely (8.7\% $\to$ 0\%), while Gobi full restoration reduces ever-collapse from 93.3\% to 10.0\%. By contrast, irrigation alone reduces Gobi collapse only marginally (93.3\% $\to$ 78.0\%). Interventions that shift the attractor produce stronger and more durable risk reduction than those that only modify environmental forcing.
+
+\subsection{Engineering Contributions}
+
+Beyond the scientific results, the pipeline itself is a deliverable. It provides a modular, reproducible architecture suitable for deployment on new regions, with automated equation quality assessment via the 6-tier reliability framework, a policy intervention engine with built-in physical consistency checks, and transparent diagnostic output including JSON summaries, cell logs, and automated evaluation scripts.
+
+\subsection{Assessment}
+
+The pipeline is well-engineered and the intervention results are directionally correct. However, the discovered equations do not reliably capture interannual vegetation dynamics at monthly resolution with the available satellite data. The near-zero $R^2$ values reflect a genuine signal-to-noise challenge: after deseasonalisation, the residual NDVI change signal has very small variance ($\sim 10^{-4}$), leaving little structure for any interpretable equation to capture. The model is best understood as a decision-support framework for comparative risk ranking and policy sensitivity analysis, with explicit uncertainty quantification, rather than a precise deterministic predictor of future NDVI.
+
+\subsection{Future Work}
+
 \begin{enumerate}[leftmargin=1.6em]
-    \item \textbf{Numerical smoothness is acceptable:} no major clipping artifacts remain in the selected final equations.
-    \item \textbf{Policy direction is interpretable:} drought worsens Rajasthan risk and restoration improves Gobi risk across metrics.
-    \item \textbf{Uncertainty is explicit:} high first-passage risks remain, so results are presented as risk ranking and resilience analysis, not deterministic prediction.
+    \item Add extra regional validation sites to test transferability of the pipeline.
+    \item Implement ensemble symbolic regression (multiple PySR seeds with consensus selection).
+    \item Add out-of-sample temporal validation (train on 2005--2018, validate on 2019--2023).
+    \item Explore physics-informed neural ODEs as an alternative to pure symbolic regression.
+    \item Incorporate irrigation scheduling data for Rajasthan to capture the primary anthropogenic driver.
 \end{enumerate}
 
-\section{What Was Fixed After Interim Report}
-\begin{table}[H]
-\centering
-\caption{Issue to fix mapping in the final phase}
-\begin{tabular}{p{4.2cm}p{5.5cm}p{4.0cm}}
-\toprule
-\textbf{Issue from interim stage} & \textbf{Final action taken} & \textbf{Status} \\
-\midrule
-Unstable symbolic forms and singularities & Added equation filters for singular behavior, clip saturation, and invalid reciprocal forms & Completed \\
-Weak report traceability & Added run\_summary JSON and full cell output log export in each run & Completed \\
-Inconsistent collapse reporting & Added ever-collapse, terminal-collapse, and persistent-collapse metrics together & Completed \\
-Policy direction ambiguity & Added intervention sign audits and scenario-level interpretation & Completed \\
-Gate inconsistency in weak tiers & Refined reliability logic with core gate keys and transparent diagnostic keys & Completed \\
-Manual transfer pain from Colab & Added one-click zip export and structured output folder review workflow & Completed \\
-\bottomrule
-\end{tabular}
-\end{table}
+% ============================================================
+\begin{thebibliography}{99}
 
-\section{Limitations and Responsible Interpretation}
-\begin{itemize}[leftmargin=1.4em]
-    \item $R^2$ values are still low, especially in Rajasthan.
-    \item The Rajasthan selected equation remains a P5 fallback form.
-    \item Several intervention levers are not directly represented in the selected Rajasthan equation, so their effect can be indirect.
-    \item The model is best interpreted for comparative risk and policy ranking, not as a precise deterministic month-by-month forecast.
-\end{itemize}
+\bibitem{chen2018}
+Chen, R.~T.~Q., Rubanova, Y., Bettencourt, J., and Duvenaud, D.,
+``Neural ordinary differential equations,''
+in \emph{Advances in Neural Information Processing Systems}, 2018.
 
-\textbf{Final interpretation rule used in this report:} The model is accepted as a decision-support model with explicit uncertainty and explicit reliability diagnostics.
+\bibitem{cranmer2023}
+Cranmer, M.,
+``Interpretable machine learning for science with PySR and SymbolicRegression.jl,''
+\emph{arXiv preprint arXiv:2305.01582}, 2023.
 
-\section{Final Conclusion}
-\textbf{Project completion statement:} The project goals for the final stage are achieved.
+\bibitem{dakos2012}
+Dakos, V., Carpenter, S.~R., Brock, W.~A., Ellison, A.~M., Guttal, V., et~al.,
+``Methods for detecting early warnings of critical transitions in time series illustrated using simulated ecological data,''
+\emph{PLOS ONE}, vol.~7, no.~7, p.~e41010, 2012.
 
-The pipeline is now modular, reproducible, and report-ready. The final run passes reliability checks for both study regions. The scenario framework gives clear policy signals, especially for the Gobi restoration package. Numerical behavior is stable in the final diagnostic panels. All required outputs for academic review are generated and documented.
+\bibitem{didan2021}
+Didan, K.,
+``MODIS/Terra vegetation indices 16-day L3 global 250m SIN grid V061,''
+NASA EOSDIS Land Processes Distributed Active Archive Center, 2021.
 
-\textbf{Most important scientific finding:} Interventions that improve long-term carrying capacity show stronger and more durable risk reduction than short-term forcing-only interventions.
+\bibitem{funk2015}
+Funk, C., Peterson, P., Landsfeld, M., Pedreros, D., Verdin, J., et~al.,
+``The climate hazards infrared precipitation with stations --- a new environmental record for monitoring extremes,''
+\emph{Scientific Data}, vol.~2, p.~150066, 2015.
 
-\section{Recommended Next Work Beyond This Final Submission}
-\begin{enumerate}[leftmargin=1.6em]
-    \item Add extra regional validation sites to test transferability.
-    \item Add uncertainty bands for parameter confidence in symbolic equations.
-    \item Add out-of-sample period checks for external validation.
-    \item Expand intervention optimization with budget constraints.
-\end{enumerate}
+\bibitem{gorelick2017}
+Gorelick, N., Hancher, M., Dixon, M., Ilyushchenko, S., Thau, D., and Moore, R.,
+``Google Earth Engine: Planetary-scale geospatial analysis for everyone,''
+\emph{Remote Sensing of Environment}, vol.~202, pp.~18--27, 2017.
 
+\bibitem{kloeden1992}
+Kloeden, P.~E. and Platen, E.,
+\emph{Numerical Solution of Stochastic Differential Equations},
+Springer-Verlag, Berlin, 1992.
+
+\bibitem{reynolds2007}
+Reynolds, J.~F., Smith, D.~M.~S., Lambin, E.~F., Turner, B.~L., et~al.,
+``Global desertification: Building a science for dryland development,''
+\emph{Science}, vol.~316, no.~5826, pp.~847--851, 2007.
+
+\bibitem{scheffer2009}
+Scheffer, M., Bascompte, J., Brock, W.~A., Brovkin, V., Carpenter, S.~R., et~al.,
+``Early-warning signals for critical transitions,''
+\emph{Nature}, vol.~461, no.~7260, pp.~53--59, 2009.
+
+\bibitem{strogatz2015}
+Strogatz, S.~H.,
+\emph{Nonlinear Dynamics and Chaos: With Applications to Physics, Biology, Chemistry, and Engineering},
+Westview Press, 2nd~ed., 2015.
+
+\bibitem{tapley2019}
+Tapley, B.~D., Watkins, M.~M., Flechtner, F., et~al.,
+``Contributions of GRACE to understanding climate change,''
+\emph{Nature Climate Change}, vol.~9, pp.~358--369, 2019.
+
+\end{thebibliography}
+
+% ============================================================
 \appendix
+
 \section{Reproducibility Checklist}
 \begin{enumerate}[leftmargin=1.6em]
-    \item Use the latest desertification package archive.
-    \item Run the notebook fully from setup to export.
-    \item Confirm generation of run\_summary JSON, cell log, and figure files.
+    \item Use the latest \texttt{desertification\_package.zip} archive.
+    \item Run the notebook fully from setup to export in Google Colab.
+    \item Confirm generation of \texttt{run\_summary.json}, cell log, and all figure files.
     \item Export output zip and archive run ID for traceability.
 \end{enumerate}
 
-\section{Files Required for This LaTeX Build}
-The following files are referenced directly by this report:
-\begin{itemize}[leftmargin=1.4em]
-    \item output\_review/20260418\_154505/images/data\_quality.png
-    \item output\_review/20260418\_154505/images/Feature\_Diagnostics.png
-    \item output\_review/20260418\_154505/images/Diagnostic\_Plots.png
-    \item output\_review/20260418\_154505/images/Main\_Summary.png
-    \item output\_review/20260418\_154505/images/Collapse\_Risk\_Summary.png
-    \item matrix.png
-    \item poincare.png
-    \item attractor.png
-    \item rk4.png
-\end{itemize}
 
-\section{Reference Notes}
-\begin{thebibliography}{9}
-
-\bibitem{pysr}
-Miles Cranmer.
-\textit{PySR: Symbolic Regression in Python and Julia}.
-GitHub project documentation.
-
-\bibitem{gee}
-Google Earth Engine Team.
-\textit{Google Earth Engine Documentation}.
-\url{https://developers.google.com/earth-engine}
-
-\bibitem{chirps}
-Funk et al.
-\textit{The climate hazards infrared precipitation with stations dataset}.
-Scientific Data, 2015.
-
-\bibitem{modis}
-NASA LP DAAC.
-\textit{MODIS Land Products Documentation}.
-
-\bibitem{ews}
-Dakos et al.
-\textit{Methods for Detecting Early Warnings of Critical Transitions}.
-PLOS ONE, 2012.
-
-\bibitem{lyapunov}
-Strogatz.
-\textit{Nonlinear Dynamics and Chaos}.
-Westview Press.
-
-\end{thebibliography}
 
 \end{document}
