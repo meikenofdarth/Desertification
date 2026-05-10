@@ -80,6 +80,69 @@ vars_map = {
 }
 
 # ============================================================
+# HLS / Sentinel-2 High-Resolution Vegetation Data
+# ============================================================
+# NASA Harmonized Landsat-Sentinel (HLS) products provide 30 m
+# vegetation indices with ~3-day revisit (Landsat 8/9 + Sentinel-2).
+# These replace MODIS 500 m NDVI/EVI when USE_HLS = True.
+
+# HLS Landsat component (30 m, 2013-present via GEE)
+hls_vars_map = {
+    'NDVI_HLS': {
+        'collection': 'NASA/HLS/HLSL30/v002',
+        'bands_red': 'B4',       # Red
+        'bands_nir': 'B5',       # NIR
+        'res': 30,
+        'formula': 'ndvi',       # (NIR - Red) / (NIR + Red)
+    },
+    'EVI_HLS': {
+        'collection': 'NASA/HLS/HLSL30/v002',
+        'bands_blue': 'B2',      # Blue
+        'bands_red':  'B4',      # Red
+        'bands_nir':  'B5',      # NIR
+        'res': 30,
+        'formula': 'evi',        # 2.5 * (NIR-Red) / (NIR + 6*Red - 7.5*Blue + 1)
+    },
+}
+
+# Sentinel-2 specific products (10-20 m, 2015-present)
+sentinel2_vars_map = {
+    'NDVI_S2': {
+        'collection': 'COPERNICUS/S2_SR_HARMONIZED',
+        'bands_red': 'B4',       # Red (10 m)
+        'bands_nir': 'B8',       # NIR (10 m)
+        'res': 10,
+        'qa_band': 'SCL',        # Scene Classification Layer for cloud masking
+    },
+    'RedEdge_NDVI': {
+        'collection': 'COPERNICUS/S2_SR_HARMONIZED',
+        'bands_red': 'B5',       # Red-Edge 1 (20 m)
+        'bands_nir': 'B8A',      # NIR narrow (20 m)
+        'res': 20,
+        'qa_band': 'SCL',
+    },
+    'NDMI': {
+        'collection': 'COPERNICUS/S2_SR_HARMONIZED',
+        'bands_nir':  'B8',      # NIR (10 m)
+        'bands_swir': 'B11',     # SWIR 1 (20 m)
+        'res': 20,
+        'qa_band': 'SCL',
+        'formula': 'ndmi',       # (NIR - SWIR) / (NIR + SWIR)
+    },
+}
+
+# ── Pixel Sampling Configuration ─────────────────────────────
+# Instead of spatial averaging (which compresses NDVI range and
+# destroys pixel-level dynamics), sample individual 30 m pixels.
+PIXEL_SAMPLE_COUNT       = 1000      # pixels per ROI
+PIXEL_SAMPLE_SEED        = 42
+TEMPORAL_COMPOSITE_DAYS  = 16        # Match Landsat-8/9 revisit cycle
+USE_HLS                  = False     # Toggle: True = HLS pixel-level, False = MODIS average
+
+# Sentinel-2 SCL cloud-mask classes to reject (cloud, shadow, snow)
+S2_MASK_VALUES = [0, 1, 2, 3, 8, 9, 10, 11]  # No data, Defective, Shadows, Cloud*
+
+# ============================================================
 # Per-Region Carrying Capacity
 # ============================================================
 K_REGION = {
@@ -198,6 +261,19 @@ FEATURES = [
     'Albedo', 'Carbon_Flux', 'FPAR', 'GPP',
     'Dust_Stress', 'Fire_Pressure',
     'Groundwater_Anomaly',
+]
+
+# Extended feature set when using HLS/Sentinel-2 pixel-level data.
+# RedEdge_NDVI uses Sentinel-2 B5/B8A (20 m) — not available from MODIS.
+# NDMI (Normalised Difference Moisture Index) uses B8/B11 (20 m).
+# NDVI_spatial_std captures intra-ROI vegetation heterogeneity at 30 m.
+FEATURES_HLS = FEATURES + [
+    'RedEdge_NDVI',       # S2-only: red-edge chlorophyll-sensitive NDVI
+    'NDMI',               # S2-only: normalised difference moisture index
+    'NDVI_spatial_std',   # Pixel-level: spatial heterogeneity within ROI
+    'NDVI_p10',           # S2-only: 10th percentile of NDVI across pixels
+    'NDVI_p90',           # S2-only: 90th percentile of NDVI across pixels
+    'NDVI_std',           # S2-only: standard deviation of NDVI across pixels
 ]
 
 # NDVI-like features that must be recomputed dynamically during simulation.

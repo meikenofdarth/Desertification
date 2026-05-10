@@ -11,7 +11,8 @@ Analyses 19 years (2005–2023) of satellite data for:
 Modules
 -------
 config          Constants, hyperparameters, variable maps
-data            GEE data extraction, scaling, quality checks
+data            GEE data extraction (MODIS), scaling, quality checks
+data_hls        HLS/Sentinel-2 pixel-level data extraction (30 m)
 features        Feature engineering, LST anomaly, audit
 ode_discovery   PySR symbolic regression, tiered ODE selection
 dynamics        Lyapunov exponents, SDE integrator, Monte Carlo
@@ -20,12 +21,14 @@ ews             Early Warning Signals (Critical Slowing Down)
 plotting        All figure generation
 """
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 
 # ── Always-available imports (no heavy dependencies) ──────────
 from .config import (
-    vars_map, K_REGION, FEATURES, NDVI_DERIVED_FEATURES,
-    VARIABLE_META, CEIL_CONFIG, THRESH,
+    vars_map, hls_vars_map, sentinel2_vars_map,
+    K_REGION, FEATURES, FEATURES_HLS, NDVI_DERIVED_FEATURES,
+    VARIABLE_META, CEIL_CONFIG, THRESH, USE_HLS,
+    PIXEL_SAMPLE_COUNT, PIXEL_SAMPLE_SEED,
 )
 from .interventions import InterventionPlan, apply_interventions
 from .interventions import check_intervention_signs, auto_correct_plan
@@ -36,7 +39,9 @@ from .ews import compute_ews
 # (e.g. in Colab). Import them explicitly in your notebook:
 #
 #   from desertification.data import fetch_data_failsafe, load_or_fetch
+#   from desertification.data_hls import load_or_fetch_hls
 #   from desertification.features import add_lst_anomaly, build_features
 #   from desertification.ode_discovery import discover_and_compile_ode
 #   from desertification.dynamics import make_drivers, calculate_lyapunov
 #   from desertification.plotting import plot_main_figure, plot_diagnostics
+

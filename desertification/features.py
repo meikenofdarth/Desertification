@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 
 from .config import (
-    K_REGION, FEATURES, NDVI_DERIVED_FEATURES,
+    K_REGION, FEATURES, FEATURES_HLS, NDVI_DERIVED_FEATURES,
     LOW_CORR_THRESHOLD, LOW_CORR_THRESHOLD_BY_REGION,
     FLAT_THRESHOLD, ZERO_FRAC_THRESHOLD,
     FEATURES_TO_EXCLUDE_BY_REGION,
@@ -73,6 +73,9 @@ def build_features(df, region_name='Rajasthan Canal'):
     """
     df = df.copy()
     K  = K_REGION.get(region_name, 0.50)
+
+    is_hls_data = 'RedEdge_NDVI' in df.columns
+
     if 'NDVI' in df:
         df['NDVI_sq']       = df['NDVI'] ** 2
         # FIX-BB: NDVI^1.5 — intermediate nonlinearity between NDVI and NDVI_sq.
@@ -80,6 +83,20 @@ def build_features(df, region_name='Rajasthan Canal'):
         df['NDVI_poly']     = df['NDVI'] ** 1.5
         # FIX-AG: computed for FIX-AE post-hoc use, NOT in FEATURES
         df['NDVI_logistic'] = df['NDVI'] * (1.0 - df['NDVI'] / K)
+
+    # For HLS data, add Rain_norm and Aridity_safe if not present
+    # (they may not have been computed if MODIS climate data was merged in)
+    if is_hls_data:
+        if 'Rain' in df.columns and 'Rain_norm' not in df.columns:
+            rain_95 = df['Rain'].quantile(0.95)
+            df['Rain_norm'] = (df['Rain'] / (rain_95 + 1e-6)).clip(0, 1)
+        if 'Rain_norm' in df.columns and 'NDVI' in df.columns and 'Aridity_safe' not in df.columns:
+            df['Aridity_safe'] = (
+                df['Rain_norm'] / (df['NDVI'].clip(lower=0.05) + 0.10)
+            ).clip(0, 5)
+        if 'GroundWater' in df.columns and 'Groundwater_Anomaly' not in df.columns:
+            df['Groundwater_Anomaly'] = df['GroundWater']
+
     return df
 
 
@@ -101,9 +118,12 @@ def feature_audit(df, region_name):
         Mapping feature_name → {'r': Pearson r, 'flat': flat fraction,
         'zero': exact-zero fraction}.
     """
-    print(f"\n  Feature audit for {region_name}:")
+    is_pixel_level = 'pixel_id' in df.columns
+    feat_list = FEATURES_HLS if is_pixel_level else FEATURES
+    print(f"\n  Feature audit for {region_name}"
+          f"{' (pixel-level HLS)' if is_pixel_level else ''}:")
     corrs = {}
-    for f in FEATURES:
+    for f in feat_list:
         if f not in df.columns:
             continue
         if f == 'NDVI':

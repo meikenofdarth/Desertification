@@ -176,7 +176,8 @@ def plot_data_quality(df_raj, df_gobi, save_path='images/data_quality.png'):
     print(f"  Data quality plot saved: {save_path}")
 
 
-def load_or_fetch(roi, start_date, end_date, cache_path, force_refresh=False):
+def load_or_fetch(roi, start_date, end_date, cache_path, force_refresh=False,
+                  use_hls=False, n_pixels=None):
     """
     Load data from CSV cache if available, otherwise fetch from GEE.
 
@@ -190,11 +191,22 @@ def load_or_fetch(roi, start_date, end_date, cache_path, force_refresh=False):
         Path to the CSV cache file.
     force_refresh : bool
         If True, always re-fetch from GEE regardless of cache.
+    use_hls : bool
+        If True, use HLS/Sentinel-2 pixel-level pipeline instead of
+        MODIS spatial-average pipeline.  Produces a much larger DataFrame
+        with per-pixel observations (~1000× more rows).
+    n_pixels : int, optional
+        Number of pixels to sample when use_hls=True.
 
     Returns
     -------
     pd.DataFrame
     """
+    if use_hls:
+        from .data_hls import load_or_fetch_hls
+        return load_or_fetch_hls(roi, start_date, end_date, cache_path,
+                                 n_pixels=n_pixels, force_refresh=force_refresh)
+
     if not force_refresh and os.path.exists(cache_path):
         print(f"  Loading cached data from {cache_path}")
         df = pd.read_csv(cache_path, parse_dates=['date'], index_col='date')

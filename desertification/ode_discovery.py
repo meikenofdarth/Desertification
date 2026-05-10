@@ -33,6 +33,7 @@ FIX-R   P4 requires sign-change; P5/P6 = fallbacks
 """
 
 import numpy as np
+import pandas as pd
 
 from .config import (
     K_REGION, FEATURES, NDVI_DERIVED_FEATURES, DRIFT_CLIP,
@@ -143,13 +144,53 @@ def discover_and_compile_ode(df, region_name, niterations=100, eq_slope_max=2.0,
     print(f"  Features for PySR ({len(feat)}): {feat}")
     diagnostics['feature_final'] = feat
 
-    df_s = df[feat].rolling(window=3, min_periods=1).mean()
+    is_pixel_level = 'pixel_id' in df.columns
+
+    df_s = df[feat + (['pixel_id'] if is_pixel_level else [])].copy()
+    # Smooth per-pixel if pixel-level, otherwise standard rolling
+    if is_pixel_level:
+        df_s[feat] = (df_s.groupby('pixel_id')[feat]
+                      .transform(lambda x: x.rolling(window=3, min_periods=1).mean()))
+    else:
+        df_s[feat] = df_s[feat].rolling(window=3, min_periods=1).mean()
 
     # ── FIX-AD: deseasonalised target ─────────────────────────
-    y_raw = df_s['NDVI'].diff().fillna(0)
-    y     = (y_raw - y_raw.groupby(y_raw.index.month).transform('mean')).values
-    X     = df_s[feat].fillna(0).values
-    print(f"  FIX-AD: Deseasonalised target — seasonal variance removed")
+    if is_pixel_level:
+        # Per-pixel deseasonalisation: subtract each pixel's monthly climatology
+        df_s['_dNDVI'] = df_s.groupby('pixel_id')['NDVI'].diff().fillna(0)
+        df_s['_month'] = df_s.index.month
+        monthly_means = df_s.groupby(['pixel_id', '_month'])['_dNDVI'].transform('mean')
+        df_s['_y_deseas'] = df_s['_dNDVI'] - monthly_means
+        y_full = df_s['_y_deseas'].values
+        X_full = df_s[feat].fillna(0).values
+
+        # Clean up temp columns before potential subsample
+        df_s = df_s.drop(columns=['_dNDVI', '_month', '_y_deseas', 'pixel_id'],
+                         errors='ignore')
+
+        # Subsample to keep PySR tractable (max ~20k rows)
+        max_pysr_rows = 20000
+        if len(y_full) > max_pysr_rows:
+            rng = np.random.RandomState(42)
+            sub_idx = rng.choice(len(y_full), size=max_pysr_rows, replace=False)
+            sub_idx.sort()
+            y = y_full[sub_idx]
+            X = X_full[sub_idx]
+            # Subsample df_s to match so downstream code (residual correction,
+            # fit_stats, policy sensitivity) all see the same row count.
+            df_s = df_s.iloc[sub_idx].reset_index(drop=True)
+            # Give df_s a dummy monthly index for groupby(index.month)
+            df_s.index = pd.date_range('2005-01-01', periods=len(df_s), freq='D')
+            print(f"  HLS: Subsampled {len(y_full)} → {max_pysr_rows} rows for PySR")
+        else:
+            y = y_full
+            X = X_full
+        print(f"  FIX-AD: Per-pixel deseasonalised target — {len(y)} rows")
+    else:
+        y_raw = df_s['NDVI'].diff().fillna(0)
+        y     = (y_raw - y_raw.groupby(y_raw.index.month).transform('mean')).values
+        X     = df_s[feat].fillna(0).values
+        print(f"  FIX-AD: Deseasonalised target — seasonal variance removed")
 
     # ── Helper: set NDVI-derived columns in a feature row ─────
     def _set_ndvi_derived(row, ndvi_val):
